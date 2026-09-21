@@ -4,10 +4,10 @@ This page provides the API reference for the native frame controller and Win32 c
 
 ## Frame Controller
 
-::: qtframeless.core.frame_controller
+::: qtframelesskit.core.frame_controller
 
 ---
 
 ## Win32 Types
 
-::: qtframeless.native.win32_types
+::: qtframelesskit.native.win32_types

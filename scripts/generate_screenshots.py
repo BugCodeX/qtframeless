@@ -1,6 +1,6 @@
 """Automated screenshot capture and animated GIF showcase generator.
 
-Captures sample windows demonstrating qtframeless capabilities:
+Captures sample windows demonstrating qtframelesskit capabilities:
 modular title bar studio, integrated menu bar with centered title,
 standard frameless main window, per-monitor DPI scaling, and frameless dialogs.
 Supports Windows 11 (rounded corners, DWM border, and drop shadow) and Windows 10
@@ -477,7 +477,7 @@ def main() -> int:
         Exit code (0 for success).
     """
     parser = argparse.ArgumentParser(
-        description="Generate qtframeless window screenshots and showcase GIF."
+        description="Generate qtframelesskit window screenshots and showcase GIF."
     )
     parser.add_argument(
         "--os",

@@ -1,31 +1,31 @@
 # Getting Started
 
-This guide walks you through installing `qtframeless` and creating your first frameless Qt window on Windows.
+This guide walks you through installing `qtframelesskit` and creating your first frameless Qt window on Windows.
 
 ---
 
 ## Installation
 
-`qtframeless` is compatible with **Python 3.10+** on Windows. You can install it alongside your preferred Qt binding using `pip` or `uv`.
+`qtframelesskit` is compatible with **Python 3.10+** on Windows. You can install it alongside your preferred Qt binding using `pip` or `uv`.
 
 === "PySide6 (Recommended)"
 
     ```bash
     # With pip
-    pip install qtframeless[pyside6]
+    pip install qtframelesskit[pyside6]
 
     # With uv
-    uv add qtframeless --extra pyside6
+    uv add qtframelesskit --extra pyside6
     ```
 
 === "PyQt6"
 
     ```bash
     # With pip
-    pip install qtframeless[pyqt6]
+    pip install qtframelesskit[pyqt6]
 
     # With uv
-    uv add qtframeless --extra pyqt6
+    uv add qtframelesskit --extra pyqt6
     ```
 
 === "Existing Qt Environment"
@@ -33,7 +33,7 @@ This guide walks you through installing `qtframeless` and creating your first fr
     If you already have `PySide6`, `PyQt6`, or `PyQt5` installed in your virtual environment:
 
     ```bash
-    pip install qtframeless
+    pip install qtframelesskit
     ```
 
 ---
@@ -45,11 +45,11 @@ Here is a complete, runnable application using `FramelessMainWindow`:
 ```python linenums="1"
 import sys
 from PySide6.QtWidgets import QApplication, QLabel
-from qtframeless import FramelessMainWindow, WindowCornerPreference
+from qtframelesskit import FramelessMainWindow, WindowCornerPreference
 
 
 class MainWindow(FramelessMainWindow):
-    """Main application window using qtframeless."""
+    """Main application window using qtframelesskit."""
 
     def __init__(self) -> None:
         super().__init__()
@@ -63,7 +63,7 @@ class MainWindow(FramelessMainWindow):
         # Add widgets to the central layout
         centralWidget = self.centralWidget()
         if centralWidget is not None and centralWidget.layout() is not None:
-            label = QLabel("Welcome to qtframeless!")
+            label = QLabel("Welcome to qtframelesskit!")
             centralWidget.layout().addWidget(label)
 
 
@@ -85,11 +85,11 @@ if __name__ == "__main__":
 
 ## Fundamental Concepts
 
-To build applications with `qtframeless`, it helps to understand three core design concepts:
+To build applications with `qtframelesskit`, it helps to understand three core design concepts:
 
 ### 1. The Win32 Message Pump Bridge
 
-Instead of hiding the window frame using Qt flags alone, `qtframeless` intercepts native Windows messages via `nativeEvent`:
+Instead of hiding the window frame using Qt flags alone, `qtframelesskit` intercepts native Windows messages via `nativeEvent`:
 
 - `WM_NCCALCSIZE`: Tells Windows that the client area should occupy the entire window frame, removing the default title bar while keeping DWM composition active.
 - `WM_NCHITTEST`: Translates cursor positions into Win32 hit codes (`HTCAPTION`, `HTLEFT`, `HTRIGHT`, `HTMAXBUTTON`, etc.), providing native drag and resize mechanics.

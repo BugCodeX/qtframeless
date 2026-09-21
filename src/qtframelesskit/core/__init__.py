@@ -1,4 +1,4 @@
-"""Core components and mixins for the qtframeless window architecture."""
+"""Core components and mixins for the qtframelesskit window architecture."""
 
 from .frame_controller import WindowFrameController
 from .frameless_mixin import FramelessWindowMixin

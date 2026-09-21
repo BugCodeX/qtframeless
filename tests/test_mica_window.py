@@ -4,7 +4,7 @@ from qtpy.QtCore import Qt
 from qtpy.QtGui import QColor, QPalette
 from qtpy.QtWidgets import QWidget
 
-from qtframeless.windows.window import (
+from qtframelesskit.windows.window import (
     FramelessMicaDialog,
     FramelessMicaMainWindow,
     FramelessMicaWindow,
@@ -30,7 +30,7 @@ def test_mica_window_initialization(qtbot, monkeypatch):
         return True
 
     monkeypatch.setattr(
-        "qtframeless.native.window_effect.WindowsEffectHelper.setMicaEffect",
+        "qtframelesskit.native.window_effect.WindowsEffectHelper.setMicaEffect",
         fakeSetMica,
     )
 
@@ -64,7 +64,7 @@ def test_mica_alt_window_initialization(qtbot, monkeypatch):
         return True
 
     monkeypatch.setattr(
-        "qtframeless.native.window_effect.WindowsEffectHelper.setMicaEffect",
+        "qtframelesskit.native.window_effect.WindowsEffectHelper.setMicaEffect",
         fakeSetMica,
     )
 
@@ -92,7 +92,7 @@ def test_mica_is_alt_toggle(qtbot, monkeypatch):
         return True
 
     monkeypatch.setattr(
-        "qtframeless.native.window_effect.WindowsEffectHelper.setMicaEffect",
+        "qtframelesskit.native.window_effect.WindowsEffectHelper.setMicaEffect",
         fakeSetMica,
     )
 
@@ -120,7 +120,7 @@ def test_mica_main_window_and_dialog(qtbot, monkeypatch):
         Pytest monkeypatch fixture.
     """
     monkeypatch.setattr(
-        "qtframeless.native.window_effect.WindowsEffectHelper.setMicaEffect",
+        "qtframelesskit.native.window_effect.WindowsEffectHelper.setMicaEffect",
         lambda self, hWnd, isAlt=False: True,
     )
 
@@ -149,7 +149,7 @@ def test_mica_dark_theme_synchronization(qtbot, monkeypatch):
         Pytest monkeypatch fixture.
     """
     monkeypatch.setattr(
-        "qtframeless.native.window_effect.WindowsEffectHelper.setMicaEffect",
+        "qtframelesskit.native.window_effect.WindowsEffectHelper.setMicaEffect",
         lambda self, hWnd, isAlt=False: True,
     )
 
@@ -160,7 +160,7 @@ def test_mica_dark_theme_synchronization(qtbot, monkeypatch):
         return True
 
     monkeypatch.setattr(
-        "qtframeless.native.window_effect.WindowsEffectHelper.setDarkTheme",
+        "qtframelesskit.native.window_effect.WindowsEffectHelper.setDarkTheme",
         fakeSetDarkTheme,
     )
 
@@ -186,7 +186,7 @@ def test_mica_title_bar_transparency(qtbot, monkeypatch):
         Pytest monkeypatch fixture.
     """
     monkeypatch.setattr(
-        "qtframeless.native.window_effect.WindowsEffectHelper.setMicaEffect",
+        "qtframelesskit.native.window_effect.WindowsEffectHelper.setMicaEffect",
         lambda self, hWnd, isAlt=False: True,
     )
 
@@ -225,7 +225,7 @@ def test_mica_title_bar_buttons_idle_transparency(qtbot, monkeypatch):
         Pytest monkeypatch fixture.
     """
     monkeypatch.setattr(
-        "qtframeless.native.window_effect.WindowsEffectHelper.setMicaEffect",
+        "qtframelesskit.native.window_effect.WindowsEffectHelper.setMicaEffect",
         lambda self, hWnd, isAlt=False: True,
     )
 
@@ -256,7 +256,7 @@ def test_mica_theme_palette_transparency(qtbot, monkeypatch):
         Pytest monkeypatch fixture.
     """
     monkeypatch.setattr(
-        "qtframeless.native.window_effect.WindowsEffectHelper.setMicaEffect",
+        "qtframelesskit.native.window_effect.WindowsEffectHelper.setMicaEffect",
         lambda self, hWnd, isAlt=False: True,
     )
 

@@ -1,9 +1,9 @@
-"""Tests for Win32 utility modules in qtframeless.native."""
+"""Tests for Win32 utility modules in qtframelesskit.native."""
 
 
 def test_win32_types_import():
     """Verify win32_types structures and enums can be imported."""
-    from qtframeless.native.win32_types import (
+    from qtframelesskit.native.win32_types import (
         DWMWINDOWATTRIBUTE,
         LPNCCALCSIZE_PARAMS,
         MARGINS,
@@ -22,7 +22,7 @@ def test_win32_types_import():
 
 def test_win32_utils_import():
     """Verify win32_utils functions and classes can be imported."""
-    from qtframeless.native.win32_utils import (
+    from qtframelesskit.native.win32_utils import (
         Taskbar,
         findWindow,
         isGreaterEqualWin8_1,
@@ -45,12 +45,12 @@ def test_get_dpi_for_window_modern_api(monkeypatch):
     monkeypatch : pytest.MonkeyPatch
         Pytest monkeypatch fixture.
     """
-    from qtframeless.native.win32_utils import getDpiForWindow
+    from qtframelesskit.native.win32_utils import getDpiForWindow
 
     mockWindowHandle = 12345
     mockDpi = 144
     monkeypatch.setattr(
-        "qtframeless.native.win32_utils.windll.user32.GetDpiForWindow",
+        "qtframelesskit.native.win32_utils.windll.user32.GetDpiForWindow",
         lambda handle: mockDpi if handle == mockWindowHandle else 0,
         raising=False,
     )
@@ -69,12 +69,12 @@ def test_get_dpi_for_window_fallback(monkeypatch):
     """
     from unittest.mock import MagicMock
 
-    from qtframeless.native.win32_utils import getDpiForWindow
+    from qtframelesskit.native.win32_utils import getDpiForWindow
 
     mockWindowHandle = 54321
     # Simulate pre-1607 Windows without GetDpiForWindow
     monkeypatch.setattr(
-        "qtframeless.native.win32_utils.windll.user32.GetDpiForWindow",
+        "qtframelesskit.native.win32_utils.windll.user32.GetDpiForWindow",
         None,
         raising=False,
     )
@@ -82,7 +82,7 @@ def test_get_dpi_for_window_fallback(monkeypatch):
     mockWindow = MagicMock()
     mockWindow.devicePixelRatio.return_value = 1.5
     monkeypatch.setattr(
-        "qtframeless.native.win32_utils.findWindow",
+        "qtframelesskit.native.win32_utils.findWindow",
         lambda handle: mockWindow if handle == mockWindowHandle else None,
     )
 
@@ -103,7 +103,7 @@ def test_get_system_metrics_for_dpi_modern_api(monkeypatch):
     """
     import win32con
 
-    from qtframeless.native.win32_utils import getSystemMetricsForDpi
+    from qtframelesskit.native.win32_utils import getSystemMetricsForDpi
 
     def mockGetSystemMetricsForDpi(metricIndex: int, dpiValue: int) -> int:
         if metricIndex == win32con.SM_CXSIZEFRAME and dpiValue == 144:
@@ -111,7 +111,7 @@ def test_get_system_metrics_for_dpi_modern_api(monkeypatch):
         return 0
 
     monkeypatch.setattr(
-        "qtframeless.native.win32_utils.windll.user32.GetSystemMetricsForDpi",
+        "qtframelesskit.native.win32_utils.windll.user32.GetSystemMetricsForDpi",
         mockGetSystemMetricsForDpi,
         raising=False,
     )
@@ -130,16 +130,16 @@ def test_get_system_metrics_for_dpi_fallback(monkeypatch):
     """
     import win32con
 
-    from qtframeless.native.win32_utils import getSystemMetricsForDpi
+    from qtframelesskit.native.win32_utils import getSystemMetricsForDpi
 
     # Simulate absence of GetSystemMetricsForDpi
     monkeypatch.setattr(
-        "qtframeless.native.win32_utils.windll.user32.GetSystemMetricsForDpi",
+        "qtframelesskit.native.win32_utils.windll.user32.GetSystemMetricsForDpi",
         None,
         raising=False,
     )
     monkeypatch.setattr(
-        "qtframeless.native.win32_utils.win32api.GetSystemMetrics",
+        "qtframelesskit.native.win32_utils.win32api.GetSystemMetrics",
         lambda metricIndex: 8 if metricIndex == win32con.SM_CXSIZEFRAME else 0,
     )
 
@@ -162,11 +162,11 @@ def test_get_resize_border_thickness_modern_dpi(monkeypatch):
     """
     import win32con
 
-    from qtframeless.native.win32_utils import getResizeBorderThickness
+    from qtframelesskit.native.win32_utils import getResizeBorderThickness
 
     mockWindowHandle = 98765
     monkeypatch.setattr(
-        "qtframeless.native.win32_utils.getDpiForWindow",
+        "qtframelesskit.native.win32_utils.getDpiForWindow",
         lambda handle: 144 if handle == mockWindowHandle else 96,
     )
 
@@ -179,7 +179,7 @@ def test_get_resize_border_thickness_modern_dpi(monkeypatch):
         return 0
 
     monkeypatch.setattr(
-        "qtframeless.native.win32_utils.windll.user32.GetSystemMetricsForDpi",
+        "qtframelesskit.native.win32_utils.windll.user32.GetSystemMetricsForDpi",
         mockGetSystemMetricsForDpi,
         raising=False,
     )
@@ -200,16 +200,16 @@ def test_get_resize_border_thickness_legacy_fallback(monkeypatch):
 
     import win32con
 
-    from qtframeless.native.win32_utils import getResizeBorderThickness
+    from qtframelesskit.native.win32_utils import getResizeBorderThickness
 
     mockWindowHandle = 55555
     monkeypatch.setattr(
-        "qtframeless.native.win32_utils.windll.user32.GetDpiForWindow",
+        "qtframelesskit.native.win32_utils.windll.user32.GetDpiForWindow",
         None,
         raising=False,
     )
     monkeypatch.setattr(
-        "qtframeless.native.win32_utils.windll.user32.GetSystemMetricsForDpi",
+        "qtframelesskit.native.win32_utils.windll.user32.GetSystemMetricsForDpi",
         None,
         raising=False,
     )
@@ -222,14 +222,14 @@ def test_get_resize_border_thickness_legacy_fallback(monkeypatch):
         return 0
 
     monkeypatch.setattr(
-        "qtframeless.native.win32_utils.win32api.GetSystemMetrics",
+        "qtframelesskit.native.win32_utils.win32api.GetSystemMetrics",
         mockStandardMetrics,
     )
 
     mockWindow = MagicMock()
     mockWindow.devicePixelRatio.return_value = 2.0
     monkeypatch.setattr(
-        "qtframeless.native.win32_utils.findWindow",
+        "qtframelesskit.native.win32_utils.findWindow",
         lambda handle: mockWindow if handle == mockWindowHandle else None,
     )
 
@@ -248,28 +248,28 @@ def test_get_resize_border_thickness_zero_metric_and_invalid_handle(monkeypatch)
     """
     from unittest.mock import MagicMock
 
-    from qtframeless.native.win32_utils import getResizeBorderThickness
+    from qtframelesskit.native.win32_utils import getResizeBorderThickness
 
     mockWindowHandle = 33333
     monkeypatch.setattr(
-        "qtframeless.native.win32_utils.windll.user32.GetDpiForWindow",
+        "qtframelesskit.native.win32_utils.windll.user32.GetDpiForWindow",
         None,
         raising=False,
     )
     monkeypatch.setattr(
-        "qtframeless.native.win32_utils.windll.user32.GetSystemMetricsForDpi",
+        "qtframelesskit.native.win32_utils.windll.user32.GetSystemMetricsForDpi",
         None,
         raising=False,
     )
     monkeypatch.setattr(
-        "qtframeless.native.win32_utils.win32api.GetSystemMetrics",
+        "qtframelesskit.native.win32_utils.win32api.GetSystemMetrics",
         lambda metricIndex: 0,
     )
 
     mockWindow = MagicMock()
     mockWindow.devicePixelRatio.return_value = 1.25
     monkeypatch.setattr(
-        "qtframeless.native.win32_utils.findWindow",
+        "qtframelesskit.native.win32_utils.findWindow",
         lambda handle: mockWindow if handle == mockWindowHandle else None,
     )
 
@@ -293,7 +293,7 @@ def test_win32_utils_type_signatures():
     from qtpy.QtCore import QOperatingSystemVersion
     from qtpy.QtGui import QWindow
 
-    from qtframeless.native.win32_utils import (
+    from qtframelesskit.native.win32_utils import (
         findWindow,
         getMonitorInfo,
         isFullScreen,
@@ -328,7 +328,7 @@ def test_win32_utils_integer_handle_queries():
 
     Asserts that passing integer handles returns boolean or None without errors.
     """
-    from qtframeless.native.win32_utils import (
+    from qtframelesskit.native.win32_utils import (
         findWindow,
         getMonitorInfo,
         isFullScreen,
@@ -352,7 +352,7 @@ def test_find_window_existing_and_non_existing(qtbot):
     """
     from qtpy.QtWidgets import QWidget
 
-    from qtframeless.native.win32_utils import findWindow
+    from qtframelesskit.native.win32_utils import findWindow
 
     widget = QWidget()
     qtbot.addWidget(widget)

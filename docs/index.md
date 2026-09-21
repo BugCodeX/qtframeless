@@ -1,31 +1,31 @@
-# qtframeless
+# qtframelesskit
 
 <div align="center">
-  <img src="images/logo.png" alt="qtframeless logo" width="320" />
+  <img src="images/logo.png" alt="qtframelesskit logo" width="320" />
 
   <p><strong>Modern, cross-Qt frameless window framework for Windows in pure Python.</strong></p>
 
   <p>
-    <a href="https://pypi.org/project/qtframeless/"><img src="https://img.shields.io/pypi/v/qtframeless.svg?color=blue" alt="PyPI Version" /></a>
-    <a href="https://pypi.org/project/qtframeless/"><img src="https://img.shields.io/badge/python-3.10%2B-blue.svg" alt="Python Versions" /></a>
+    <a href="https://pypi.org/project/qtframelesskit/"><img src="https://img.shields.io/pypi/v/qtframelesskit.svg?color=blue" alt="PyPI Version" /></a>
+    <a href="https://pypi.org/project/qtframelesskit/"><img src="https://img.shields.io/badge/python-3.10%2B-blue.svg" alt="Python Versions" /></a>
     <a href="https://pypi.org/project/PySide6/"><img src="https://img.shields.io/badge/Qt-PySide6-41cd52.svg" alt="PySide6" /></a>
     <a href="https://pypi.org/project/PyQt6/"><img src="https://img.shields.io/badge/Qt-PyQt6-41cd52.svg" alt="PyQt6" /></a>
     <a href="https://www.microsoft.com/windows"><img src="https://img.shields.io/badge/platform-Windows-0078d6.svg" alt="Platform" /></a>
-    <a href="https://github.com/BugCodeX/qtframeless/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-MIT-green.svg" alt="License" /></a>
+    <a href="https://github.com/BugCodeX/qtframelesskit/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-MIT-green.svg" alt="License" /></a>
   </p>
 </div>
 
 ---
 
 <div align="center">
-  <img src="images/windows11_showcase.gif" alt="qtframeless Windows 11 Showcase" width="800" />
+  <img src="images/windows11_showcase.gif" alt="qtframelesskit Windows 11 Showcase" width="800" />
 </div>
 
 ---
 
-## Welcome to qtframeless
+## Welcome to qtframelesskit
 
-**qtframeless** is a lightweight, pure-Python framework designed to build native-feeling frameless windows in Qt on Windows. It works seamlessly across **PySide6**, **PyQt6**, and **PyQt5** via `qtpy`, with **zero C++ compilation** or binary wheel requirements.
+**qtframelesskit** is a lightweight, pure-Python framework designed to build native-feeling frameless windows in Qt on Windows. It works seamlessly across **PySide6**, **PyQt6**, and **PyQt5** via `qtpy`, with **zero C++ compilation** or binary wheel requirements.
 
 ---
 
@@ -39,7 +39,7 @@ window.setWindowFlags(Qt.WindowType.FramelessWindowHint)
 
 While this removes the operating system's title bar, it strips away fundamental Windows Desktop Window Manager (DWM) capabilities:
 
-| Lost OS Feature | Impact on Standard Qt Frameless Windows | How qtframeless Solves It |
+| Lost OS Feature | Impact on Standard Qt Frameless Windows | How qtframelesskit Solves It |
 | --- | --- | --- |
 | **DWM Drop Shadows** | The window becomes flat; developers must emulate shadows by drawing blurry margins in software. | Retains true native DWM drop shadows via non-client frame calculation (`WM_NCCALCSIZE`). |
 | **Snap Layouts Menu** | Hovering over custom maximize buttons does nothing on Windows 11. | Full Windows 11 Snap Layouts integration via `WM_NCHITTEST` and `HTMAXBUTTON`. |
@@ -48,7 +48,7 @@ While this removes the operating system's title bar, it strips away fundamental 
 | **Taskbar Collision** | Maximized frameless windows often overlap the Windows taskbar. | Accurately calculates work area boundaries to avoid taskbar overlap. |
 | **Fluent Materials** | Cannot easily apply native Windows 11 Mica or Acrylic backdrops. | First-class support for Mica, Mica Alt, and Acrylic blur-behind backdrops. |
 
-`qtframeless` restores these native Win32 window mechanics through `ctypes` and `pywin32` while keeping the Qt widget API clean, idiomatic, and non-invasive.
+`qtframelesskit` restores these native Win32 window mechanics through `ctypes` and `pywin32` while keeping the Qt widget API clean, idiomatic, and non-invasive.
 
 ---
 
@@ -94,7 +94,7 @@ While this removes the operating system's title bar, it strips away fundamental 
 
 ## Windows Compatibility
 
-`qtframeless` automatically detects the host Windows OS build at runtime and gracefully enables modern features or falls back to supported behavior:
+`qtframelesskit` automatically detects the host Windows OS build at runtime and gracefully enables modern features or falls back to supported behavior:
 
 | Feature | Windows 11 22H2+<br>`Build >= 22621` | Windows 11 21H2<br>`Build >= 22000` | Windows 10 1809+<br>`Build >= 17763` |
 | --- | :---: | :---: | :---: |
@@ -108,7 +108,7 @@ While this removes the operating system's title bar, it strips away fundamental 
 | **Per-Monitor DPI Scaling** | :material-check: Full | :material-check: Full | :material-check: Full |
 
 !!! note "Platform Requirement"
-    `qtframeless` relies on native Windows APIs (`dwmapi.dll`, `user32.dll`). On non-Windows platforms (Linux, macOS), importing `qtframeless` raises `PlatformNotSupportedError`.
+    `qtframelesskit` relies on native Windows APIs (`dwmapi.dll`, `user32.dll`). On non-Windows platforms (Linux, macOS), importing `qtframelesskit` raises `PlatformNotSupportedError`.
 
 ---
 

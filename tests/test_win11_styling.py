@@ -3,9 +3,9 @@
 from qtpy.QtGui import QColor
 from qtpy.QtWidgets import QWidget
 
-from qtframeless import WindowCornerPreference
-from qtframeless.core.frameless_mixin import FramelessWindowMixin
-from qtframeless.native.win32_types import colorToColorRef
+from qtframelesskit import WindowCornerPreference
+from qtframelesskit.core.frameless_mixin import FramelessWindowMixin
+from qtframelesskit.native.win32_types import colorToColorRef
 
 
 class ConcreteWindow(FramelessWindowMixin, QWidget):
@@ -64,7 +64,7 @@ def test_window_border_color_state(qtbot):
 
 def test_window_caption_color_state(qtbot):
     """Verify setting and getting customized caption color."""
-    from qtframeless.native.win32_types import DWMWA_COLOR_NONE
+    from qtframelesskit.native.win32_types import DWMWA_COLOR_NONE
 
     window = ConcreteWindow()
     qtbot.addWidget(window)

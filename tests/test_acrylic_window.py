@@ -4,8 +4,8 @@ from qtpy.QtCore import QEvent, Qt
 from qtpy.QtGui import QColor, QPalette
 from qtpy.QtWidgets import QWidget
 
-from qtframeless.native.win32_utils import isGreaterEqualWin11
-from qtframeless.windows.window import (
+from qtframelesskit.native.win32_utils import isGreaterEqualWin11
+from qtframelesskit.windows.window import (
     AcrylicWindowMixin,
     FramelessAcrylicDialog,
     FramelessAcrylicMainWindow,
@@ -31,7 +31,7 @@ def test_acrylic_window_initialization(qtbot, monkeypatch):
         return True
 
     monkeypatch.setattr(
-        "qtframeless.native.window_effect.WindowsEffectHelper.setAcrylicEffect",
+        "qtframelesskit.native.window_effect.WindowsEffectHelper.setAcrylicEffect",
         fakeSetAcrylic,
     )
 
@@ -71,7 +71,7 @@ def test_acrylic_main_window_initialization(qtbot, monkeypatch):
         Pytest monkeypatch fixture.
     """
     monkeypatch.setattr(
-        "qtframeless.native.window_effect.WindowsEffectHelper.setAcrylicEffect",
+        "qtframelesskit.native.window_effect.WindowsEffectHelper.setAcrylicEffect",
         lambda self, hWnd, gradientColor=None: True,
     )
 
@@ -96,7 +96,7 @@ def test_acrylic_dialog_initialization(qtbot, monkeypatch):
         Pytest monkeypatch fixture.
     """
     monkeypatch.setattr(
-        "qtframeless.native.window_effect.WindowsEffectHelper.setAcrylicEffect",
+        "qtframelesskit.native.window_effect.WindowsEffectHelper.setAcrylicEffect",
         lambda self, hWnd, gradientColor=None: True,
     )
 
@@ -126,7 +126,7 @@ def test_acrylic_gradient_color_getter_and_setter(qtbot, monkeypatch):
         return True
 
     monkeypatch.setattr(
-        "qtframeless.native.window_effect.WindowsEffectHelper.setAcrylicEffect",
+        "qtframelesskit.native.window_effect.WindowsEffectHelper.setAcrylicEffect",
         fakeSetAcrylic,
     )
 
@@ -152,7 +152,7 @@ def test_acrylic_window_state_change_refreshes_blur(qtbot, monkeypatch):
         Pytest monkeypatch fixture.
     """
     monkeypatch.setattr(
-        "qtframeless.native.window_effect.WindowsEffectHelper.setAcrylicEffect",
+        "qtframelesskit.native.window_effect.WindowsEffectHelper.setAcrylicEffect",
         lambda self, hWnd, gradientColor=None: True,
     )
 
@@ -185,7 +185,7 @@ def test_acrylic_title_bar_transparency(qtbot, monkeypatch):
         Pytest monkeypatch fixture.
     """
     monkeypatch.setattr(
-        "qtframeless.native.window_effect.WindowsEffectHelper.setAcrylicEffect",
+        "qtframelesskit.native.window_effect.WindowsEffectHelper.setAcrylicEffect",
         lambda self, hWnd, gradientColor=None: True,
     )
 
@@ -224,7 +224,7 @@ def test_acrylic_title_bar_buttons_idle_transparency(qtbot, monkeypatch):
         Pytest monkeypatch fixture.
     """
     monkeypatch.setattr(
-        "qtframeless.native.window_effect.WindowsEffectHelper.setAcrylicEffect",
+        "qtframelesskit.native.window_effect.WindowsEffectHelper.setAcrylicEffect",
         lambda self, hWnd, gradientColor=None: True,
     )
 
@@ -255,7 +255,7 @@ def test_acrylic_theme_palette_transparency(qtbot, monkeypatch):
         Pytest monkeypatch fixture.
     """
     monkeypatch.setattr(
-        "qtframeless.native.window_effect.WindowsEffectHelper.setAcrylicEffect",
+        "qtframelesskit.native.window_effect.WindowsEffectHelper.setAcrylicEffect",
         lambda self, hWnd, gradientColor=None: True,
     )
 

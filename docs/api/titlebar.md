@@ -1,5 +1,5 @@
 # Title Bar API Reference
 
-This page provides the API reference for the custom title bar and button controls in `qtframeless.windows.title_bar`.
+This page provides the API reference for the custom title bar and button controls in `qtframelesskit.windows.title_bar`.
 
-::: qtframeless.windows.title_bar
+::: qtframelesskit.windows.title_bar

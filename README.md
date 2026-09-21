@@ -1,12 +1,12 @@
 <div align="center">
-  <img src="docs/images/logo.png" alt="qtframeless logo" width="320" />
+  <img src="docs/images/logo.png" alt="qtframelesskit logo" width="320" />
 
-  # qtframeless
+  # qtframelesskit
 
   **Modern, cross-Qt frameless window framework for Windows in pure Python.**
 
-  [![PyPI Version](https://img.shields.io/pypi/v/qtframeless.svg?color=blue)](https://pypi.org/project/qtframeless/)
-  [![Python Versions](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://pypi.org/project/qtframeless/)
+  [![PyPI Version](https://img.shields.io/pypi/v/qtframelesskit.svg?color=blue)](https://pypi.org/project/qtframelesskit/)
+  [![Python Versions](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://pypi.org/project/qtframelesskit/)
   [![PySide6](https://img.shields.io/badge/Qt-PySide6-41cd52.svg)](https://pypi.org/project/PySide6/)
   [![PyQt6](https://img.shields.io/badge/Qt-PyQt6-41cd52.svg)](https://pypi.org/project/PyQt6/)
   [![Platform](https://img.shields.io/badge/platform-Windows-0078d6.svg)](https://www.microsoft.com/windows)
@@ -17,11 +17,11 @@
 
 ## Overview
 
-**qtframeless** is a modern, lightweight, pure-Python framework for building native-feeling frameless windows in Qt on Windows.
+**qtframelesskit** is a modern, lightweight, pure-Python framework for building native-feeling frameless windows in Qt on Windows.
 
 Standard Qt frameless windows (`Qt.WindowType.FramelessWindowHint`) strip away crucial operating system capabilities: native DWM drop shadows, smooth window resize borders, Windows 11 Snap Layout menus, and modern backdrop materials like Mica and Acrylic.
 
-`qtframeless` restores these native Win32 window mechanics through `ctypes` and `pywin32`—with **zero C++ compilation** or binary wheel dependencies required.
+`qtframelesskit` restores these native Win32 window mechanics through `ctypes` and `pywin32`—with **zero C++ compilation** or binary wheel dependencies required.
 
 ---
 
@@ -30,30 +30,30 @@ Standard Qt frameless windows (`Qt.WindowType.FramelessWindowHint`) strip away c
 ### Windows 11
 
 <div align="center">
-  <img src="docs/images/windows11_showcase.gif" alt="qtframeless Windows 11 Showcase" width="800" />
+  <img src="docs/images/windows11_showcase.gif" alt="qtframelesskit Windows 11 Showcase" width="800" />
 </div>
 
 ### Windows 10
 
 <div align="center">
-  <img src="docs/images/windows10_showcase.gif" alt="qtframeless Windows 10 Showcase" width="800" />
+  <img src="docs/images/windows10_showcase.gif" alt="qtframelesskit Windows 10 Showcase" width="800" />
 </div>
 
 ---
 
 ## Installation
 
-Install `qtframeless` with your preferred Qt binding:
+Install `qtframelesskit` with your preferred Qt binding:
 
 ```bash
 # With PySide6 (recommended)
-pip install qtframeless[pyside6]
+pip install qtframelesskit[pyside6]
 
 # With PyQt6
-pip install qtframeless[pyqt6]
+pip install qtframelesskit[pyqt6]
 
 # If you already have a Qt binding installed
-pip install qtframeless
+pip install qtframelesskit
 ```
 
 ---
@@ -67,7 +67,7 @@ A standard frameless window featuring native DWM drop shadows, rounded corners, 
 ```python
 import sys
 from PySide6.QtWidgets import QApplication, QLabel
-from qtframeless import FramelessMainWindow, WindowCornerPreference
+from qtframelesskit import FramelessMainWindow, WindowCornerPreference
 
 
 class MainWindow(FramelessMainWindow):
@@ -83,7 +83,7 @@ class MainWindow(FramelessMainWindow):
         # Add content to central widget
         centralWidget = self.centralWidget()
         if centralWidget is not None and centralWidget.layout() is not None:
-            centralWidget.layout().addWidget(QLabel("Welcome to qtframeless!"))
+            centralWidget.layout().addWidget(QLabel("Welcome to qtframelesskit!"))
 
 
 if __name__ == "__main__":
@@ -100,7 +100,7 @@ Leverage the native Windows 11 Mica backdrop material:
 ```python
 import sys
 from PySide6.QtWidgets import QApplication, QLabel
-from qtframeless import FramelessMicaMainWindow, WindowCornerPreference
+from qtframelesskit import FramelessMicaMainWindow, WindowCornerPreference
 
 
 class MicaWindow(FramelessMicaMainWindow):
@@ -131,7 +131,7 @@ Apply native Windows Fluent Acrylic blur-behind material with custom tint color:
 ```python
 import sys
 from PySide6.QtWidgets import QApplication, QLabel
-from qtframeless import FramelessAcrylicMainWindow, WindowCornerPreference
+from qtframelesskit import FramelessAcrylicMainWindow, WindowCornerPreference
 
 
 class AcrylicWindow(FramelessAcrylicMainWindow):
@@ -162,7 +162,7 @@ Seamlessly embed a `QMenuBar` directly into the title bar alongside a centered w
 import sys
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QApplication
-from qtframeless import FramelessMainWindow
+from qtframelesskit import FramelessMainWindow
 
 
 class Window(FramelessMainWindow):
@@ -196,7 +196,7 @@ if __name__ == "__main__":
 
 ## Windows Compatibility
 
-`qtframeless` automatically detects the host Windows OS build at runtime and gracefully enables or falls back on visual effects:
+`qtframelesskit` automatically detects the host Windows OS build at runtime and gracefully enables or falls back on visual effects:
 
 | Feature | Windows 11 22H2+<br>(Build &ge; 22621) | Windows 11 21H2<br>(Build &ge; 22000) | Windows 10 1809+<br>(Build &ge; 17763) |
 |---|:---:|:---:|:---:|
@@ -209,7 +209,7 @@ if __name__ == "__main__":
 | **Dark / Light Theme Sync** | Full | Full | Full |
 | **Per-Monitor DPI Scaling** | Full | Full | Full |
 
-*Note: On non-Windows platforms, importing `qtframeless` raises `PlatformNotSupportedError`.*
+*Note: On non-Windows platforms, importing `qtframelesskit` raises `PlatformNotSupportedError`.*
 
 ---
 

@@ -8,9 +8,9 @@ from qtpy.QtCore import QByteArray, QPoint, Qt
 from qtpy.QtGui import QPixmap
 from qtpy.QtWidgets import QWidget
 
-from qtframeless import FramelessWidget
-from qtframeless.native.win32_types import WM_NCMOUSELEAVE
-from qtframeless.windows.title_bar import MaximizeButton, TitleBar
+from qtframelesskit import FramelessWidget
+from qtframelesskit.native.win32_types import WM_NCMOUSELEAVE
+from qtframelesskit.windows.title_bar import MaximizeButton, TitleBar
 
 
 def test_maximize_button_hover_state(qtbot) -> None:
@@ -144,7 +144,7 @@ def test_wm_nchittest_returns_htmaxbutton_for_resizable_window(qtbot, monkeypatc
     globalCursorPosition = maximizeButton.mapToGlobal(buttonCenter)
 
     monkeypatch.setattr(
-        "qtframeless.core.frame_controller.QCursor.pos",
+        "qtframelesskit.core.frame_controller.QCursor.pos",
         staticmethod(lambda: globalCursorPosition),
     )
 
@@ -173,7 +173,7 @@ def test_wm_nchittest_does_not_return_htmaxbutton_for_non_resizable(qtbot, monke
     globalCursorPosition = maximizeButton.mapToGlobal(buttonCenter)
 
     monkeypatch.setattr(
-        "qtframeless.core.frame_controller.QCursor.pos",
+        "qtframelesskit.core.frame_controller.QCursor.pos",
         staticmethod(lambda: globalCursorPosition),
     )
 
@@ -207,7 +207,7 @@ def test_wm_nchittest_without_maximize_button(qtbot, monkeypatch) -> None:
     # Pick a point in the title bar corner area
     globalCursorPosition = widget.mapToGlobal(QPoint(350, 15))
     monkeypatch.setattr(
-        "qtframeless.core.frame_controller.QCursor.pos",
+        "qtframelesskit.core.frame_controller.QCursor.pos",
         staticmethod(lambda: globalCursorPosition),
     )
 
@@ -237,7 +237,7 @@ def test_wm_nchittest_when_maximized(qtbot, monkeypatch) -> None:
     globalCursorPosition = maximizeButton.mapToGlobal(buttonCenter)
 
     monkeypatch.setattr(
-        "qtframeless.core.frame_controller.QCursor.pos",
+        "qtframelesskit.core.frame_controller.QCursor.pos",
         staticmethod(lambda: globalCursorPosition),
     )
 

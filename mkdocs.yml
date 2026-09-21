@@ -1,8 +1,8 @@
-site_name: qtframeless
+site_name: QtFramelessKit
 site_description: "Modern, cross-Qt frameless window framework for Windows in pure Python."
-site_url: https://qtframeless.readthedocs.io/
-repo_url: https://github.com/BugCodeX/qtframeless
-repo_name: BugCodeX/qtframeless
+site_url: https://qtframelesskit.readthedocs.io/
+repo_url: https://github.com/BugCodeX/qtframelesskit
+repo_name: BugCodeX/qtframelesskit
 
 theme:
   name: material

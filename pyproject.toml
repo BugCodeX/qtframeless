@@ -1,5 +1,5 @@
 [project]
-name = "qtframeless"
+name = "qtframelesskit"
 version = "0.1.0"
 description = "Modern, cross-Qt frameless window framework for Windows in pure Python."
 readme = "README.md"
@@ -44,10 +44,10 @@ dependencies = [
 ]
 
 [project.urls]
-Documentation = "https://qtframeless.readthedocs.io/"
-Homepage = "https://github.com/BugCodeX/qtframeless"
-Issues = "https://github.com/BugCodeX/qtframeless/issues"
-Repository = "https://github.com/BugCodeX/qtframeless"
+Documentation = "https://qtframelesskit.readthedocs.io/"
+Homepage = "https://github.com/BugCodeX/qtframelesskit"
+Issues = "https://github.com/BugCodeX/qtframelesskit/issues"
+Repository = "https://github.com/BugCodeX/qtframelesskit"
 
 [project.optional-dependencies]
 docs = [
@@ -94,7 +94,7 @@ build-backend = "setuptools.build_meta"
 # coverage
 # ============================================================
 [tool.coverage.run]
-source = ["qtframeless"]
+source = ["qtframelesskit"]
 omit = [
   "examples/*",
   "tests/*",
@@ -105,12 +105,12 @@ omit = [
 # ============================================================
 [tool.pyright]
 include = [
-  "src/qtframeless",
+  "src/qtframelesskit",
   "tests",
 ]
 pythonVersion = "3.11"
 extraPaths = [
-  "src/qtframeless",
+  "src/qtframelesskit",
   ".",
 ]
 typeCheckingMode = "basic"
@@ -212,7 +212,7 @@ skip-magic-trailing-comma = false
 docstring-code-format = true
 
 [tool.setuptools.package-data]
-qtframeless = ["py.typed"]
+qtframelesskit = ["py.typed"]
 
 [tool.setuptools.packages.find]
 where = ["src"]

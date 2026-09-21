@@ -6,7 +6,7 @@ from qtpy.QtCore import Qt
 from qtpy.QtGui import QColor, QPalette
 from qtpy.QtWidgets import QWidget
 
-from qtframeless.core.theme import ThemeController
+from qtframelesskit.core.theme import ThemeController
 
 
 def test_theme_controller_initialization(qapp) -> None:
@@ -133,11 +133,11 @@ def test_detect_system_theme_dark(monkeypatch, qapp) -> None:
     controller = ThemeController(window)
 
     monkeypatch.setattr(
-        "qtframeless.core.theme.OpenKey",
+        "qtframelesskit.core.theme.OpenKey",
         lambda *args, **kwargs: MagicMock(),
     )
     monkeypatch.setattr(
-        "qtframeless.core.theme.QueryValueEx",
+        "qtframelesskit.core.theme.QueryValueEx",
         lambda *args, **kwargs: (0, 4),
     )
 
@@ -150,11 +150,11 @@ def test_detect_system_theme_light(monkeypatch, qapp) -> None:
     controller = ThemeController(window)
 
     monkeypatch.setattr(
-        "qtframeless.core.theme.OpenKey",
+        "qtframelesskit.core.theme.OpenKey",
         lambda *args, **kwargs: MagicMock(),
     )
     monkeypatch.setattr(
-        "qtframeless.core.theme.QueryValueEx",
+        "qtframelesskit.core.theme.QueryValueEx",
         lambda *args, **kwargs: (1, 4),
     )
 
@@ -169,7 +169,7 @@ def test_detect_system_theme_os_error(monkeypatch, qapp) -> None:
     def raiseOsError(*args, **kwargs):
         raise OSError("Registry key not found")
 
-    monkeypatch.setattr("qtframeless.core.theme.OpenKey", raiseOsError)
+    monkeypatch.setattr("qtframelesskit.core.theme.OpenKey", raiseOsError)
 
     assert controller.detectSystemTheme() is None
 

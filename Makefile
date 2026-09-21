@@ -71,7 +71,7 @@ test:
 	$(UV) run pytest
 
 test-cov:
-	$(UV) run pytest --cov=qtframeless --cov-report=term-missing --cov-report=html
+	$(UV) run pytest --cov=qtframelesskit --cov-report=term-missing --cov-report=html
 
 # ---------------------------------------------------------------------------
 # Documentation

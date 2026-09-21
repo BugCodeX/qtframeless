@@ -8,9 +8,9 @@ import win32con
 from qtpy.QtCore import QByteArray, QPoint
 from qtpy.QtWidgets import QWidget
 
-from qtframeless.core.frame_controller import WindowFrameController
-from qtframeless.core.frameless_mixin import FramelessWindowMixin
-from qtframeless.native.win32_types import NCCALCSIZE_PARAMS, WM_DPICHANGED, WM_NCMOUSELEAVE
+from qtframelesskit.core.frame_controller import WindowFrameController
+from qtframelesskit.core.frameless_mixin import FramelessWindowMixin
+from qtframelesskit.native.win32_types import NCCALCSIZE_PARAMS, WM_DPICHANGED, WM_NCMOUSELEAVE
 
 
 class DummyWindow(FramelessWindowMixin, QWidget):
@@ -84,7 +84,7 @@ def test_frame_controller_resize_hit_testing(qtbot, monkeypatch) -> None:
 
     # 1. Top-left corner hit test
     monkeypatch.setattr(
-        "qtframeless.core.frame_controller.QCursor.pos",
+        "qtframelesskit.core.frame_controller.QCursor.pos",
         staticmethod(lambda: QPoint(100, 100)),
     )
     result = controller.handleNativeEvent(QByteArray(b"windows_generic_MSG"), messagePointer)
@@ -92,7 +92,7 @@ def test_frame_controller_resize_hit_testing(qtbot, monkeypatch) -> None:
 
     # 2. Right edge hit test
     monkeypatch.setattr(
-        "qtframeless.core.frame_controller.QCursor.pos",
+        "qtframelesskit.core.frame_controller.QCursor.pos",
         staticmethod(lambda: QPoint(299, 200)),
     )
     result = controller.handleNativeEvent(QByteArray(b"windows_generic_MSG"), messagePointer)
@@ -100,7 +100,7 @@ def test_frame_controller_resize_hit_testing(qtbot, monkeypatch) -> None:
 
     # 3. Client area hit test returns None
     monkeypatch.setattr(
-        "qtframeless.core.frame_controller.QCursor.pos",
+        "qtframelesskit.core.frame_controller.QCursor.pos",
         staticmethod(lambda: QPoint(200, 200)),
     )
     result = controller.handleNativeEvent(QByteArray(b"windows_generic_MSG"), messagePointer)
@@ -109,7 +109,7 @@ def test_frame_controller_resize_hit_testing(qtbot, monkeypatch) -> None:
     # 4. Non-resizable window returns None for borders
     controller.setResizable(False)
     monkeypatch.setattr(
-        "qtframeless.core.frame_controller.QCursor.pos",
+        "qtframelesskit.core.frame_controller.QCursor.pos",
         staticmethod(lambda: QPoint(100, 100)),
     )
     result = controller.handleNativeEvent(QByteArray(b"windows_generic_MSG"), messagePointer)
@@ -141,7 +141,7 @@ def test_frame_controller_snap_layout_hit_testing(qtbot, monkeypatch) -> None:
     globalCursorPosition = maximizeButton.mapToGlobal(buttonCenter)
 
     monkeypatch.setattr(
-        "qtframeless.core.frame_controller.QCursor.pos",
+        "qtframelesskit.core.frame_controller.QCursor.pos",
         staticmethod(lambda: globalCursorPosition),
     )
 
@@ -176,7 +176,7 @@ def test_frame_controller_nc_mouse_events(qtbot, monkeypatch) -> None:
     assert maximizeButton is not None
 
     monkeypatch.setattr(
-        "qtframeless.core.frame_controller.windll.user32.TrackMouseEvent", lambda pointer: True
+        "qtframelesskit.core.frame_controller.windll.user32.TrackMouseEvent", lambda pointer: True
     )
 
     # 1. WM_NCMOUSEMOVE with HTMAXBUTTON
@@ -242,8 +242,8 @@ def test_frame_controller_nc_calc_size(qtbot, monkeypatch) -> None:
     messagePointer = ctypes.addressof(syntheticMessage)
 
     # 1. Normal state: rect remains unchanged
-    monkeypatch.setattr("qtframeless.core.frame_controller.isMaximized", lambda hWnd: False)
-    monkeypatch.setattr("qtframeless.core.frame_controller.isFullScreen", lambda hWnd: False)
+    monkeypatch.setattr("qtframelesskit.core.frame_controller.isMaximized", lambda hWnd: False)
+    monkeypatch.setattr("qtframelesskit.core.frame_controller.isFullScreen", lambda hWnd: False)
 
     result = controller.handleNativeEvent(QByteArray(b"windows_generic_MSG"), messagePointer)
     assert result == (True, win32con.WVR_REDRAW)
@@ -251,11 +251,11 @@ def test_frame_controller_nc_calc_size(qtbot, monkeypatch) -> None:
     assert calcParams.rgrc[0].top == 0
 
     # 2. Maximized state: inset by border thickness
-    monkeypatch.setattr("qtframeless.core.frame_controller.isMaximized", lambda hWnd: True)
+    monkeypatch.setattr("qtframelesskit.core.frame_controller.isMaximized", lambda hWnd: True)
     monkeypatch.setattr(
-        "qtframeless.core.frame_controller.getResizeBorderThickness", lambda hWnd: 8
+        "qtframelesskit.core.frame_controller.getResizeBorderThickness", lambda hWnd: 8
     )
-    monkeypatch.setattr("qtframeless.core.frame_controller.Taskbar.isAutoHide", lambda: False)
+    monkeypatch.setattr("qtframelesskit.core.frame_controller.Taskbar.isAutoHide", lambda: False)
 
     result = controller.handleNativeEvent(QByteArray(b"windows_generic_MSG"), messagePointer)
     assert result == (True, win32con.WVR_REDRAW)

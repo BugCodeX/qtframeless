@@ -3,9 +3,9 @@
 from qtpy.QtCore import Qt
 from qtpy.QtWidgets import QDialog, QMainWindow, QWidget
 
-from qtframeless.core.frameless_mixin import FramelessWindowMixin
-from qtframeless.windows import FramelessDialog, FramelessMainWindow, FramelessWidget
-from qtframeless.windows.base_widget import BaseDialog, BaseMainWindow, BaseWidget
+from qtframelesskit.core.frameless_mixin import FramelessWindowMixin
+from qtframelesskit.windows import FramelessDialog, FramelessMainWindow, FramelessWidget
+from qtframelesskit.windows.base_widget import BaseDialog, BaseMainWindow, BaseWidget
 
 
 def test_base_widget_inheritance_and_features(qtbot):
@@ -100,7 +100,7 @@ def test_base_frameless_windows_pure_opaque_no_window_effect(qtbot):
     qtbot : pytestqt.qtbot.QtBot
         Pytest-qt fixture for widget lifecycle management.
     """
-    from qtframeless import FramelessDialog, FramelessMainWindow, FramelessWindow
+    from qtframelesskit import FramelessDialog, FramelessMainWindow, FramelessWindow
 
     window = FramelessWindow()
     mainWindow = FramelessMainWindow()
@@ -128,8 +128,8 @@ def test_setup_frameless_layout_default_container(qtbot):
     """
     from qtpy.QtWidgets import QVBoxLayout, QWidget
 
-    from qtframeless.windows import _setupFramelessLayout
-    from qtframeless.windows.title_bar import TitleBar
+    from qtframelesskit.windows import _setupFramelessLayout
+    from qtframelesskit.windows.title_bar import TitleBar
 
     containerWidget = QWidget()
     qtbot.addWidget(containerWidget)
@@ -156,8 +156,8 @@ def test_setup_frameless_layout_preserves_custom_layout(qtbot):
     """
     from qtpy.QtWidgets import QHBoxLayout, QWidget
 
-    from qtframeless.windows import _setupFramelessLayout
-    from qtframeless.windows.title_bar import TitleBar
+    from qtframelesskit.windows import _setupFramelessLayout
+    from qtframelesskit.windows.title_bar import TitleBar
 
     containerWidget = QWidget()
     qtbot.addWidget(containerWidget)
@@ -180,7 +180,7 @@ def test_setup_frameless_layout_missing_title_bar(qtbot):
     """
     from qtpy.QtWidgets import QWidget
 
-    from qtframeless.windows import _setupFramelessLayout
+    from qtframelesskit.windows import _setupFramelessLayout
 
     containerWidget = QWidget()
     qtbot.addWidget(containerWidget)
@@ -192,7 +192,7 @@ def test_setup_frameless_layout_missing_title_bar(qtbot):
 
 def test_root_exports_for_dedicated_material_classes():
     """Verify all new material window classes and mixins are exported at root package level."""
-    import qtframeless
+    import qtframelesskit
 
     expectedExports = [
         "AcrylicWindowMixin",
@@ -210,5 +210,5 @@ def test_root_exports_for_dedicated_material_classes():
     ]
 
     for exportName in expectedExports:
-        assert hasattr(qtframeless, exportName), f"Missing export: {exportName}"
-        assert exportName in qtframeless.__all__, f"Missing in __all__: {exportName}"
+        assert hasattr(qtframelesskit, exportName), f"Missing export: {exportName}"
+        assert exportName in qtframelesskit.__all__, f"Missing in __all__: {exportName}"

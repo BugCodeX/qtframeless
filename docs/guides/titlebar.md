@@ -1,6 +1,6 @@
 # Title Bar & MenuBar
 
-The custom title bar (`TitleBar`) in `qtframeless` replaces the native Windows non-client caption while preserving full OS integration (drag-to-move, double-click to maximize, Windows 11 Snap Layouts flyout, and DPI scaling).
+The custom title bar (`TitleBar`) in `qtframelesskit` replaces the native Windows non-client caption while preserving full OS integration (drag-to-move, double-click to maximize, Windows 11 Snap Layouts flyout, and DPI scaling).
 
 ---
 
@@ -23,7 +23,7 @@ The title bar is divided into three functional horizontal sections:
 
 ## Embedding a QMenuBar
 
-In standard Windows applications, menu bars typically sit below the title bar, consuming valuable vertical real estate. `qtframeless` allows you to embed a `QMenuBar` directly into the title bar alongside your control buttons.
+In standard Windows applications, menu bars typically sit below the title bar, consuming valuable vertical real estate. `qtframelesskit` allows you to embed a `QMenuBar` directly into the title bar alongside your control buttons.
 
 ### In FramelessMainWindow
 
@@ -32,7 +32,7 @@ When using `FramelessMainWindow`, calling `self.menuBar()` automatically returns
 ```python linenums="1"
 import sys
 from PySide6.QtWidgets import QApplication
-from qtframeless import FramelessMainWindow
+from qtframelesskit import FramelessMainWindow
 
 
 class Window(FramelessMainWindow):
@@ -69,7 +69,7 @@ If you are using `FramelessWindow`, you can attach a `QMenuBar` explicitly throu
 
 ```python
 from PySide6.QtWidgets import QMenuBar
-from qtframeless import FramelessWindow
+from qtframelesskit import FramelessWindow
 
 window = FramelessWindow()
 titleBar = window.getTitleBar()

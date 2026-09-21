@@ -1,6 +1,6 @@
 ---
 name: release-notes
-description: "Trigger: release, release notes, changelog, tag, version. Run the qtframeless release process: draft release notes, verify version consistency, create annotated tags, update changelog, and coordinate GitHub Releases."
+description: "Trigger: release, release notes, changelog, tag, version. Run the qtframelesskit release process: draft release notes, verify version consistency, create annotated tags, update changelog, and coordinate GitHub Releases."
 license: MIT
 metadata:
   author: BugCodeX
@@ -11,11 +11,11 @@ metadata:
 
 ## Purpose
 
-Enforce a standardized, structured release process for **qtframeless**, including drafting user-facing release notes from conventional commits, verifying version consistency across configuration and source files, maintaining `CHANGELOG.md`, and coordinating Git tags and GitHub Releases with strict confirmation gates.
+Enforce a standardized, structured release process for **qtframelesskit**, including drafting user-facing release notes from conventional commits, verifying version consistency across configuration and source files, maintaining `CHANGELOG.md`, and coordinating Git tags and GitHub Releases with strict confirmation gates.
 
 ## When to Use
 
-Any time a release, release notes, changelog entry, version tag, or GitHub Release is drafted, prepared, or published for `qtframeless`.
+Any time a release, release notes, changelog entry, version tag, or GitHub Release is drafted, prepared, or published for `qtframelesskit`.
 
 ---
 
@@ -25,8 +25,8 @@ Any time a release, release notes, changelog entry, version tag, or GitHub Relea
 - **Group by conventional commit type**: Categorize commits into user-facing sections; never dump a raw or unformatted commit list.
 - **Filter internal commits**: Exclude internal `ci` and routine `chore` commits unless they directly affect library consumers or packaging.
 - **Omit empty sections entirely**: Never write "No fixes in this release" or create empty headers.
-- **Verify version consistency**: Ensure `pyproject.toml` (`version = "X.Y.Z"`) and `src/qtframeless/__init__.py` (`__version__ = "X.Y.Z"`) match the target release tag exactly.
-- **Mandatory Verification section**: Every release note must include verification instructions for installing with optional Qt bindings (`[pyside6]` or `[pyqt6]`) and checking `qtframeless.__version__`.
+- **Verify version consistency**: Ensure `pyproject.toml` (`version = "X.Y.Z"`) and `src/qtframelesskit/__init__.py` (`__version__ = "X.Y.Z"`) match the target release tag exactly.
+- **Mandatory Verification section**: Every release note must include verification instructions for installing with optional Qt bindings (`[pyside6]` or `[pyqt6]`) and checking `qtframelesskit.__version__`.
 - **STRICT GATE**: NEVER create tags (`git tag`) or publish GitHub Releases (`gh release create`) without explicit user confirmation.
 
 ---
@@ -61,7 +61,7 @@ Any time a release, release notes, changelog entry, version tag, or GitHub Relea
 3. **Verify Version Consistency**:
    Confirm that the target version `X.Y.Z` is identical in:
    - `pyproject.toml` (`version = "X.Y.Z"`)
-   - `src/qtframeless/__init__.py` (`__version__ = "X.Y.Z"`)
+   - `src/qtframelesskit/__init__.py` (`__version__ = "X.Y.Z"`)
 
 4. **Request Explicit User Confirmation (MANDATORY GATE)**:
    Present the draft release notes and ask for confirmation before creating any tag or GitHub Release.
@@ -70,7 +70,7 @@ Any time a release, release notes, changelog entry, version tag, or GitHub Relea
    Once confirmed, create an annotated local tag and push:
 
    ```bash
-   git tag -a vX.Y.Z -m "qtframeless vX.Y.Z"
+   git tag -a vX.Y.Z -m "qtframelesskit vX.Y.Z"
    git push origin <branch>
    git push origin vX.Y.Z
    ```
@@ -82,7 +82,7 @@ Any time a release, release notes, changelog entry, version tag, or GitHub Relea
    Publish the release using the GitHub CLI:
 
    ```bash
-   gh release create vX.Y.Z --title "qtframeless vX.Y.Z" --notes-file <file>
+   gh release create vX.Y.Z --title "qtframelesskit vX.Y.Z" --notes-file <file>
    ```
 
 ---
@@ -90,7 +90,7 @@ Any time a release, release notes, changelog entry, version tag, or GitHub Relea
 ## Release Notes Output Format
 
 ```markdown
-# qtframeless vX.Y.Z
+# qtframelesskit vX.Y.Z
 
 ## What's New
 <!-- feat commits: new features, APIs, and capabilities -->
@@ -112,8 +112,8 @@ Any time a release, release notes, changelog entry, version tag, or GitHub Relea
 <!-- Mandatory section: commands to validate installation and version -->
 ```bash
 # Install with preferred binding
-pip install qtframeless[pyside6]==X.Y.Z  # or qtframeless[pyqt6]==X.Y.Z
-python -c "import qtframeless; print(qtframeless.__version__)"
+pip install qtframelesskit[pyside6]==X.Y.Z  # or qtframelesskit[pyqt6]==X.Y.Z
+python -c "import qtframelesskit; print(qtframelesskit.__version__)"
 ```
 
 ---
@@ -133,7 +133,7 @@ python -c "import qtframeless; print(qtframeless.__version__)"
 ## Example
 
 ```markdown
-# qtframeless v0.1.0
+# qtframelesskit v0.1.0
 
 ## What's New
 - Pure Python frameless window implementation with native Windows snap layouts
@@ -143,8 +143,8 @@ python -c "import qtframeless; print(qtframeless.__version__)"
 ## Verification
 ```bash
 # Install with preferred binding
-pip install qtframeless[pyside6]==0.1.0  # or qtframeless[pyqt6]==0.1.0
-python -c "import qtframeless; print(qtframeless.__version__)"
+pip install qtframelesskit[pyside6]==0.1.0  # or qtframelesskit[pyqt6]==0.1.0
+python -c "import qtframelesskit; print(qtframelesskit.__version__)"
 ```
 
 ---

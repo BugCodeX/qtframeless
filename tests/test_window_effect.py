@@ -6,7 +6,7 @@ from ctypes import sizeof
 
 def test_window_effect_enum():
     """Verify WindowEffect enum definition and member values."""
-    from qtframeless.native.win32_types import WindowEffect
+    from qtframelesskit.native.win32_types import WindowEffect
 
     assert WindowEffect.NONE.value == 0
     assert WindowEffect.MICA.value == 1
@@ -16,7 +16,7 @@ def test_window_effect_enum():
 
 def test_dwm_system_backdrop_type_enum():
     """Verify DWM_SYSTEMBACKDROP_TYPE enum values match Windows SDK definitions."""
-    from qtframeless.native.win32_types import DWM_SYSTEMBACKDROP_TYPE
+    from qtframelesskit.native.win32_types import DWM_SYSTEMBACKDROP_TYPE
 
     assert DWM_SYSTEMBACKDROP_TYPE.AUTO.value == 0
     assert DWM_SYSTEMBACKDROP_TYPE.NONE.value == 1
@@ -27,7 +27,7 @@ def test_dwm_system_backdrop_type_enum():
 
 def test_accent_structures_and_enums():
     """Verify ACCENT_STATE, ACCENT_POLICY, and WINDOWCOMPOSITIONATTRIBDATA ctypes layouts."""
-    from qtframeless.native.win32_types import (
+    from qtframelesskit.native.win32_types import (
         ACCENT_POLICY,
         ACCENT_STATE,
         WINDOWCOMPOSITIONATTRIBDATA,
@@ -58,7 +58,7 @@ def test_accent_structures_and_enums():
 
 def test_dwm_blurbehind_structure_and_constants():
     """Verify DWM_BLURBEHIND ctypes structure and associated flags."""
-    from qtframeless.native.win32_types import (
+    from qtframelesskit.native.win32_types import (
         ACCENT_FLAG_ACRYLIC,
         DWM_BB_BLURREGION,
         DWM_BB_ENABLE,
@@ -83,7 +83,7 @@ def test_dwm_blurbehind_structure_and_constants():
 
 def test_dwm_backdrop_constants_direct_export():
     """Verify backdrop constants exported from win32_types and window_effect."""
-    from qtframeless.native.win32_types import (
+    from qtframelesskit.native.win32_types import (
         DWMSBT_AUTO,
         DWMSBT_MAINWINDOW,
         DWMSBT_NONE,
@@ -92,16 +92,16 @@ def test_dwm_backdrop_constants_direct_export():
         DWMWA_MICA_EFFECT,
         DWMWA_SYSTEMBACKDROP_TYPE,
     )
-    from qtframeless.native.window_effect import (
+    from qtframelesskit.native.window_effect import (
         DWMSBT_MAINWINDOW as EFFECT_MAINWINDOW,
     )
-    from qtframeless.native.window_effect import (
+    from qtframelesskit.native.window_effect import (
         DWMSBT_TABBEDWINDOW as EFFECT_TABBEDWINDOW,
     )
-    from qtframeless.native.window_effect import (
+    from qtframelesskit.native.window_effect import (
         DWMWA_MICA_EFFECT as EFFECT_MICA,
     )
-    from qtframeless.native.window_effect import (
+    from qtframelesskit.native.window_effect import (
         DWMWA_SYSTEMBACKDROP_TYPE as EFFECT_BACKDROP,
     )
 
@@ -127,8 +127,8 @@ def test_enable_blur_behind_window(monkeypatch):
     monkeypatch : pytest.MonkeyPatch
         Pytest monkeypatch fixture.
     """
-    from qtframeless.native.win32_types import DWM_BB_ENABLE, DWM_BLURBEHIND
-    from qtframeless.native.window_effect import WindowsEffectHelper
+    from qtframelesskit.native.win32_types import DWM_BB_ENABLE, DWM_BLURBEHIND
+    from qtframelesskit.native.window_effect import WindowsEffectHelper
 
     helper = WindowsEffectHelper()
     recordedCalls = []
@@ -156,7 +156,7 @@ def test_refresh_background_blur_effect(monkeypatch):
     monkeypatch : pytest.MonkeyPatch
         Pytest monkeypatch fixture.
     """
-    from qtframeless.native.window_effect import WindowsEffectHelper
+    from qtframelesskit.native.window_effect import WindowsEffectHelper
 
     helper = WindowsEffectHelper()
     refreshedHandles = []
@@ -180,16 +180,16 @@ def test_set_acrylic_effect_accent_flags_and_blur_behind(monkeypatch):
     monkeypatch : pytest.MonkeyPatch
         Pytest monkeypatch fixture.
     """
-    from qtframeless.native.win32_types import (
+    from qtframelesskit.native.win32_types import (
         ACCENT_FLAG_ACRYLIC,
         ACCENT_POLICY,
         WINDOWCOMPOSITIONATTRIBDATA,
     )
-    from qtframeless.native.window_effect import WindowsEffectHelper
+    from qtframelesskit.native.window_effect import WindowsEffectHelper
 
     helper = WindowsEffectHelper()
     monkeypatch.setattr(
-        "qtframeless.native.window_effect.isGreaterEqualWin10_17063",
+        "qtframelesskit.native.window_effect.isGreaterEqualWin10_17063",
         lambda: True,
     )
 
@@ -223,7 +223,7 @@ def test_set_acrylic_effect_accent_flags_and_blur_behind(monkeypatch):
 
 def test_dwm_window_attributes_extended():
     """Verify extended DWMWINDOWATTRIBUTE enum values for Mica and system backdrop."""
-    from qtframeless.native.win32_types import (
+    from qtframelesskit.native.win32_types import (
         DWMWA_COLOR_DEFAULT,
         DWMWA_COLOR_NONE,
         DWMWINDOWATTRIBUTE,
@@ -238,15 +238,15 @@ def test_dwm_window_attributes_extended():
 
 
 def test_window_effect_root_export():
-    """Verify WindowEffect is exported from the root qtframeless package and in __all__."""
-    import qtframeless
-    from qtframeless import WindowEffect
+    """Verify WindowEffect is exported from the root qtframelesskit package and in __all__."""
+    import qtframelesskit
+    from qtframelesskit import WindowEffect
 
     assert WindowEffect.NONE.value == 0
     assert WindowEffect.MICA.value == 1
     assert WindowEffect.ACRYLIC.value == 2
     assert WindowEffect.MICA_ALT.value == 3
-    assert "WindowEffect" in qtframeless.__all__
+    assert "WindowEffect" in qtframelesskit.__all__
 
 
 def test_set_mica_effect_win11_22621(monkeypatch):
@@ -257,15 +257,15 @@ def test_set_mica_effect_win11_22621(monkeypatch):
     monkeypatch : pytest.MonkeyPatch
         Pytest monkeypatch fixture.
     """
-    from qtframeless.native.win32_types import (
+    from qtframelesskit.native.win32_types import (
         DWM_SYSTEMBACKDROP_TYPE,
         DWMWINDOWATTRIBUTE,
     )
-    from qtframeless.native.window_effect import WindowsEffectHelper
+    from qtframelesskit.native.window_effect import WindowsEffectHelper
 
     helper = WindowsEffectHelper()
     monkeypatch.setattr(
-        "qtframeless.native.window_effect.isGreaterEqualWin11_22H2",
+        "qtframelesskit.native.window_effect.isGreaterEqualWin11_22H2",
         lambda: True,
     )
 
@@ -317,16 +317,16 @@ def test_set_mica_effect_win11_22000(monkeypatch):
     monkeypatch : pytest.MonkeyPatch
         Pytest monkeypatch fixture.
     """
-    from qtframeless.native.win32_types import DWMWINDOWATTRIBUTE
-    from qtframeless.native.window_effect import WindowsEffectHelper
+    from qtframelesskit.native.win32_types import DWMWINDOWATTRIBUTE
+    from qtframelesskit.native.window_effect import WindowsEffectHelper
 
     helper = WindowsEffectHelper()
     monkeypatch.setattr(
-        "qtframeless.native.window_effect.isGreaterEqualWin11_22H2",
+        "qtframelesskit.native.window_effect.isGreaterEqualWin11_22H2",
         lambda: False,
     )
     monkeypatch.setattr(
-        "qtframeless.native.window_effect.isGreaterEqualWin11",
+        "qtframelesskit.native.window_effect.isGreaterEqualWin11",
         lambda: True,
     )
 
@@ -365,15 +365,15 @@ def test_set_mica_effect_unsupported_platform(monkeypatch):
     monkeypatch : pytest.MonkeyPatch
         Pytest monkeypatch fixture.
     """
-    from qtframeless.native.window_effect import WindowsEffectHelper
+    from qtframelesskit.native.window_effect import WindowsEffectHelper
 
     helper = WindowsEffectHelper()
     monkeypatch.setattr(
-        "qtframeless.native.window_effect.isGreaterEqualWin11_22H2",
+        "qtframelesskit.native.window_effect.isGreaterEqualWin11_22H2",
         lambda: False,
     )
     monkeypatch.setattr(
-        "qtframeless.native.window_effect.isGreaterEqualWin11",
+        "qtframelesskit.native.window_effect.isGreaterEqualWin11",
         lambda: False,
     )
 
@@ -388,17 +388,17 @@ def test_set_acrylic_effect_supported(monkeypatch):
     monkeypatch : pytest.MonkeyPatch
         Pytest monkeypatch fixture.
     """
-    from qtframeless.native.win32_types import (
+    from qtframelesskit.native.win32_types import (
         ACCENT_POLICY,
         ACCENT_STATE,
         WCA_ACCENT_POLICY,
         WINDOWCOMPOSITIONATTRIBDATA,
     )
-    from qtframeless.native.window_effect import WindowsEffectHelper
+    from qtframelesskit.native.window_effect import WindowsEffectHelper
 
     helper = WindowsEffectHelper()
     monkeypatch.setattr(
-        "qtframeless.native.window_effect.isGreaterEqualWin10_17063",
+        "qtframelesskit.native.window_effect.isGreaterEqualWin10_17063",
         lambda: True,
     )
 
@@ -434,15 +434,15 @@ def test_set_acrylic_effect_color_conversions(monkeypatch):
     monkeypatch : pytest.MonkeyPatch
         Pytest monkeypatch fixture.
     """
-    from qtframeless.native.win32_types import (
+    from qtframelesskit.native.win32_types import (
         ACCENT_POLICY,
         WINDOWCOMPOSITIONATTRIBDATA,
     )
-    from qtframeless.native.window_effect import WindowsEffectHelper
+    from qtframelesskit.native.window_effect import WindowsEffectHelper
 
     helper = WindowsEffectHelper()
     monkeypatch.setattr(
-        "qtframeless.native.window_effect.isGreaterEqualWin10_17063",
+        "qtframelesskit.native.window_effect.isGreaterEqualWin10_17063",
         lambda: True,
     )
 
@@ -475,17 +475,17 @@ def test_set_acrylic_effect_unsupported_and_error_handling(monkeypatch):
     monkeypatch : pytest.MonkeyPatch
         Pytest monkeypatch fixture.
     """
-    from qtframeless.native.window_effect import WindowsEffectHelper
+    from qtframelesskit.native.window_effect import WindowsEffectHelper
 
     helper = WindowsEffectHelper()
     monkeypatch.setattr(
-        "qtframeless.native.window_effect.isGreaterEqualWin10_17063",
+        "qtframelesskit.native.window_effect.isGreaterEqualWin10_17063",
         lambda: False,
     )
     assert helper.setAcrylicEffect(2003) is False
 
     monkeypatch.setattr(
-        "qtframeless.native.window_effect.isGreaterEqualWin10_17063",
+        "qtframelesskit.native.window_effect.isGreaterEqualWin10_17063",
         lambda: True,
     )
 
@@ -508,7 +508,7 @@ def test_remove_backdrop_effect(monkeypatch):
     monkeypatch : pytest.MonkeyPatch
         Pytest monkeypatch fixture.
     """
-    from qtframeless.native.win32_types import (
+    from qtframelesskit.native.win32_types import (
         ACCENT_POLICY,
         ACCENT_STATE,
         DWM_SYSTEMBACKDROP_TYPE,
@@ -516,15 +516,15 @@ def test_remove_backdrop_effect(monkeypatch):
         WCA_ACCENT_POLICY,
         WINDOWCOMPOSITIONATTRIBDATA,
     )
-    from qtframeless.native.window_effect import WindowsEffectHelper
+    from qtframelesskit.native.window_effect import WindowsEffectHelper
 
     helper = WindowsEffectHelper()
     monkeypatch.setattr(
-        "qtframeless.native.window_effect.isGreaterEqualWin11_22H2",
+        "qtframelesskit.native.window_effect.isGreaterEqualWin11_22H2",
         lambda: True,
     )
     monkeypatch.setattr(
-        "qtframeless.native.window_effect.isGreaterEqualWin10_17063",
+        "qtframelesskit.native.window_effect.isGreaterEqualWin10_17063",
         lambda: True,
     )
 
@@ -576,20 +576,20 @@ def test_remove_backdrop_effect_win11_22000(monkeypatch):
     monkeypatch : pytest.MonkeyPatch
         Pytest monkeypatch fixture.
     """
-    from qtframeless.native.win32_types import DWMWINDOWATTRIBUTE
-    from qtframeless.native.window_effect import WindowsEffectHelper
+    from qtframelesskit.native.win32_types import DWMWINDOWATTRIBUTE
+    from qtframelesskit.native.window_effect import WindowsEffectHelper
 
     helper = WindowsEffectHelper()
     monkeypatch.setattr(
-        "qtframeless.native.window_effect.isGreaterEqualWin11_22H2",
+        "qtframelesskit.native.window_effect.isGreaterEqualWin11_22H2",
         lambda: False,
     )
     monkeypatch.setattr(
-        "qtframeless.native.window_effect.isGreaterEqualWin11",
+        "qtframelesskit.native.window_effect.isGreaterEqualWin11",
         lambda: True,
     )
     monkeypatch.setattr(
-        "qtframeless.native.window_effect.isGreaterEqualWin10_17063",
+        "qtframelesskit.native.window_effect.isGreaterEqualWin10_17063",
         lambda: False,
     )
 
@@ -616,7 +616,7 @@ def test_parse_gradient_color_variations():
     """Verify _parseGradientColor handles QColor, 6-char hex, 0x prefix, and invalid strings."""
     from qtpy.QtGui import QColor
 
-    from qtframeless.native.window_effect import _parseGradientColor
+    from qtframelesskit.native.window_effect import _parseGradientColor
 
     assert _parseGradientColor(None) == 0x99F2F2F2
     assert _parseGradientColor(0x11223344) == 0x11223344
@@ -641,16 +641,16 @@ def test_set_caption_color(monkeypatch):
     monkeypatch : pytest.MonkeyPatch
         Pytest monkeypatch fixture.
     """
-    from qtframeless.native.win32_types import (
+    from qtframelesskit.native.win32_types import (
         DWMWA_COLOR_DEFAULT,
         DWMWA_COLOR_NONE,
         DWMWINDOWATTRIBUTE,
     )
-    from qtframeless.native.window_effect import WindowsEffectHelper
+    from qtframelesskit.native.window_effect import WindowsEffectHelper
 
     helper = WindowsEffectHelper()
     monkeypatch.setattr(
-        "qtframeless.native.window_effect.isGreaterEqualWin11",
+        "qtframelesskit.native.window_effect.isGreaterEqualWin11",
         lambda: True,
     )
 
@@ -709,11 +709,11 @@ def test_set_caption_color_unsupported(monkeypatch):
     monkeypatch : pytest.MonkeyPatch
         Pytest monkeypatch fixture.
     """
-    from qtframeless.native.window_effect import WindowsEffectHelper
+    from qtframelesskit.native.window_effect import WindowsEffectHelper
 
     helper = WindowsEffectHelper()
     monkeypatch.setattr(
-        "qtframeless.native.window_effect.isGreaterEqualWin11",
+        "qtframelesskit.native.window_effect.isGreaterEqualWin11",
         lambda: False,
     )
 
@@ -731,8 +731,8 @@ def test_set_dark_theme_dwm_attribute(monkeypatch):
     from ctypes import POINTER, cast, sizeof
     from ctypes.wintypes import BOOL
 
-    from qtframeless.native.win32_types import DWMWINDOWATTRIBUTE
-    from qtframeless.native.window_effect import WindowsEffectHelper
+    from qtframelesskit.native.win32_types import DWMWINDOWATTRIBUTE
+    from qtframelesskit.native.window_effect import WindowsEffectHelper
 
     helper = WindowsEffectHelper()
     recordedCalls = []

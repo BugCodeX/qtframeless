@@ -1,9 +1,9 @@
-"""Tests verifying clean, canonical public API exports across qtframeless modules."""
+"""Tests verifying clean, canonical public API exports across qtframelesskit modules."""
 
 
-def test_qtframeless_public_exports():
+def test_qtframelesskit_public_exports():
     """Verify clean canonical public classes and functions are exported at root."""
-    import qtframeless
+    import qtframelesskit
 
     expectedSymbols = [
         "FramelessDialog",
@@ -14,7 +14,7 @@ def test_qtframeless_public_exports():
         "WindowCornerPreference",
     ]
     for symbol in expectedSymbols:
-        assert hasattr(qtframeless, symbol), f"qtframeless missing export {symbol}"
+        assert hasattr(qtframelesskit, symbol), f"qtframelesskit missing export {symbol}"
 
     # Verify internal Base classes and lowercase aliases are not polluted in root __all__
     for internalSymbol in [
@@ -25,12 +25,12 @@ def test_qtframeless_public_exports():
         "baseMainWindow",
         "baseWidget",
     ]:
-        assert internalSymbol not in qtframeless.__all__
+        assert internalSymbol not in qtframelesskit.__all__
 
 
 def test_canonical_native_exports():
-    """Verify qtframeless.native exports required structures and visual effect helpers."""
-    import qtframeless.native as nativeModule
+    """Verify qtframelesskit.native exports required structures and visual effect helpers."""
+    import qtframelesskit.native as nativeModule
 
     expectedNativeSymbols = [
         "DWMWA_COLOR_DEFAULT",
@@ -45,13 +45,13 @@ def test_canonical_native_exports():
         "window_effect",
     ]
     for symbol in expectedNativeSymbols:
-        assert hasattr(nativeModule, symbol), f"qtframeless.native missing export {symbol}"
-        assert symbol in nativeModule.__all__, f"qtframeless.native.__all__ missing {symbol}"
+        assert hasattr(nativeModule, symbol), f"qtframelesskit.native missing export {symbol}"
+        assert symbol in nativeModule.__all__, f"qtframelesskit.native.__all__ missing {symbol}"
 
 
 def test_canonical_core_exports():
-    """Verify qtframeless.core exports frame controller, theme, and mixin components."""
-    import qtframeless.core as coreModule
+    """Verify qtframelesskit.core exports frame controller, theme, and mixin components."""
+    import qtframelesskit.core as coreModule
 
     assert hasattr(coreModule, "FramelessWindowMixin")
     assert hasattr(coreModule, "WindowFrameController")
@@ -59,8 +59,8 @@ def test_canonical_core_exports():
 
 
 def test_canonical_windows_exports():
-    """Verify qtframeless.windows exports base window classes and title bar without lowercase aliases."""
-    import qtframeless.windows as windowsModule
+    """Verify qtframelesskit.windows exports base window classes and title bar without lowercase aliases."""
+    import qtframelesskit.windows as windowsModule
 
     expectedWindowsSymbols = [
         "AcrylicWindowMixin",
@@ -86,8 +86,8 @@ def test_canonical_windows_exports():
         "VectorButton",
     ]
     for symbol in expectedWindowsSymbols:
-        assert hasattr(windowsModule, symbol), f"qtframeless.windows missing export {symbol}"
-        assert symbol in windowsModule.__all__, f"qtframeless.windows.__all__ missing {symbol}"
+        assert hasattr(windowsModule, symbol), f"qtframelesskit.windows missing export {symbol}"
+        assert symbol in windowsModule.__all__, f"qtframelesskit.windows.__all__ missing {symbol}"
 
     # Verify lowercase aliases are purged from __all__
     for legacyAlias in ["baseWidget", "baseDialog", "baseMainWindow", "titleBar"]:

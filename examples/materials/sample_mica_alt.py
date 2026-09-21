@@ -11,7 +11,7 @@ from qtpy.QtWidgets import (
     QVBoxLayout,
 )
 
-from qtframeless import FramelessMicaMainWindow, WindowCornerPreference
+from qtframelesskit import FramelessMicaMainWindow, WindowCornerPreference
 
 
 class MicaAltWindow(FramelessMicaMainWindow):

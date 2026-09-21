@@ -6,7 +6,7 @@ implementations without duplicating logic across widget hierarchies.
 
 from qtpy.QtWidgets import QDialog, QMainWindow, QWidget
 
-from qtframeless.core.frameless_mixin import FramelessWindowMixin
+from qtframelesskit.core.frameless_mixin import FramelessWindowMixin
 
 
 class BaseWidget(FramelessWindowMixin, QWidget):

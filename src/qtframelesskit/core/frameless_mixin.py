@@ -13,11 +13,11 @@ from qtpy.QtCore import Property, QByteArray, Qt, Signal
 from qtpy.QtGui import QColor, QIcon, QMouseEvent, QPalette
 from qtpy.QtWidgets import QWidget
 
-from qtframeless.core.frame_controller import WindowFrameController
-from qtframeless.core.theme import ThemeController
-from qtframeless.native.win32_types import WindowCornerPreference
-from qtframeless.native.window_effect import WindowsEffectHelper
-from qtframeless.windows.title_bar import TitleBar
+from qtframelesskit.core.frame_controller import WindowFrameController
+from qtframelesskit.core.theme import ThemeController
+from qtframelesskit.native.win32_types import WindowCornerPreference
+from qtframelesskit.native.window_effect import WindowsEffectHelper
+from qtframelesskit.windows.title_bar import TitleBar
 
 __all__ = ["FramelessWindowMixin"]
 

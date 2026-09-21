@@ -14,16 +14,16 @@ from qtpy.QtCore import QByteArray, QPoint, Qt
 from qtpy.QtGui import QColor, QFont, QIcon, QMouseEvent, QPalette, QPixmap
 from qtpy.QtWidgets import QWidget
 
-from qtframeless.core.frameless_mixin import FramelessWindowMixin
-from qtframeless.native.win32_types import (
+from qtframelesskit.core.frameless_mixin import FramelessWindowMixin
+from qtframelesskit.native.win32_types import (
     NCCALCSIZE_PARAMS,
     WM_DPICHANGED,
     WindowCornerPreference,
 )
-from qtframeless.native.win32_types import (
+from qtframelesskit.native.win32_types import (
     RECT as WIN32_RECT,
 )
-from qtframeless.native.win32_utils import Taskbar
+from qtframelesskit.native.win32_utils import Taskbar
 
 
 class DummyFramelessWidget(FramelessWindowMixin, QWidget):
@@ -58,7 +58,7 @@ def test_frameless_mixin_nc_hit_test_scaled_dpi(qtbot, monkeypatch):
 
     # 192 DPI (2.0x scale -> scaled border width = round(5 * 192 / 96) = 10 px)
     monkeypatch.setattr(
-        "qtframeless.core.frame_controller.getDpiForWindow",
+        "qtframelesskit.core.frame_controller.getDpiForWindow",
         lambda hWnd: 192,
     )
 
@@ -70,7 +70,7 @@ def test_frameless_mixin_nc_hit_test_scaled_dpi(qtbot, monkeypatch):
     # Relative x = 7 is inside 10px scaled left border
     scaledLeftPoint = QPoint(107, 200)
     monkeypatch.setattr(
-        "qtframeless.core.frame_controller.QCursor.pos",
+        "qtframelesskit.core.frame_controller.QCursor.pos",
         staticmethod(lambda: scaledLeftPoint),
     )
     eventHandled, hitCode = widget.nativeEvent(QByteArray(b"windows_generic_MSG"), messagePointer)
@@ -80,7 +80,7 @@ def test_frameless_mixin_nc_hit_test_scaled_dpi(qtbot, monkeypatch):
     # Relative x = 12 is outside 10px border, falls through to client area
     clientPoint = QPoint(112, 200)
     monkeypatch.setattr(
-        "qtframeless.core.frame_controller.QCursor.pos",
+        "qtframelesskit.core.frame_controller.QCursor.pos",
         staticmethod(lambda: clientPoint),
     )
     eventHandled, _ = widget.nativeEvent(QByteArray(b"windows_generic_MSG"), messagePointer)
@@ -443,11 +443,11 @@ def test_frameless_mixin_light_theme_detection(qtbot, monkeypatch):
     qtbot.addWidget(widget)
 
     monkeypatch.setattr(
-        "qtframeless.core.theme.OpenKey",
+        "qtframelesskit.core.theme.OpenKey",
         lambda *args, **kwargs: MagicMock(),
     )
     monkeypatch.setattr(
-        "qtframeless.core.theme.QueryValueEx",
+        "qtframelesskit.core.theme.QueryValueEx",
         lambda *args, **kwargs: (1, 4),
     )
 
@@ -471,11 +471,11 @@ def test_frameless_mixin_dark_theme_detection(qtbot, monkeypatch):
     qtbot.addWidget(widget)
 
     monkeypatch.setattr(
-        "qtframeless.core.theme.OpenKey",
+        "qtframelesskit.core.theme.OpenKey",
         lambda *args, **kwargs: MagicMock(),
     )
     monkeypatch.setattr(
-        "qtframeless.core.theme.QueryValueEx",
+        "qtframelesskit.core.theme.QueryValueEx",
         lambda *args, **kwargs: (0, 4),
     )
 
@@ -686,7 +686,7 @@ def test_frameless_mixin_native_event_nc_hit_test(qtbot, monkeypatch):
 
     for caseName, cursorPosition, expectedHitCode in hitTestCases:
         monkeypatch.setattr(
-            "qtframeless.core.frame_controller.QCursor.pos",
+            "qtframelesskit.core.frame_controller.QCursor.pos",
             staticmethod(lambda pos=cursorPosition: pos),
         )
         eventHandled, hitCode = widget.nativeEvent(
@@ -700,7 +700,7 @@ def test_frameless_mixin_native_event_nc_hit_test(qtbot, monkeypatch):
     # Center (client area) falls through
     centerPosition = QPoint(200, 200)
     monkeypatch.setattr(
-        "qtframeless.core.frame_controller.QCursor.pos",
+        "qtframelesskit.core.frame_controller.QCursor.pos",
         staticmethod(lambda: centerPosition),
     )
     eventHandled, _ = widget.nativeEvent(QByteArray(b"windows_generic_MSG"), messagePointer)
@@ -710,7 +710,7 @@ def test_frameless_mixin_native_event_nc_hit_test(qtbot, monkeypatch):
     widget.setResizable(False)
     topEdgePosition = QPoint(200, 100)
     monkeypatch.setattr(
-        "qtframeless.core.frame_controller.QCursor.pos",
+        "qtframelesskit.core.frame_controller.QCursor.pos",
         staticmethod(lambda: topEdgePosition),
     )
     eventHandled, _ = widget.nativeEvent(QByteArray(b"windows_generic_MSG"), messagePointer)
@@ -745,8 +745,8 @@ def test_frameless_mixin_native_event_nc_calc_size_wparam_true(qtbot, monkeypatc
     messagePointer = ctypes.addressof(syntheticMessage)
 
     # 1. Normal window state: rect remains unchanged
-    monkeypatch.setattr("qtframeless.core.frame_controller.isMaximized", lambda hWnd: False)
-    monkeypatch.setattr("qtframeless.core.frame_controller.isFullScreen", lambda hWnd: False)
+    monkeypatch.setattr("qtframelesskit.core.frame_controller.isMaximized", lambda hWnd: False)
+    monkeypatch.setattr("qtframelesskit.core.frame_controller.isFullScreen", lambda hWnd: False)
 
     eventHandled, resultCode = widget.nativeEvent(
         QByteArray(b"windows_generic_MSG"), messagePointer
@@ -759,12 +759,12 @@ def test_frameless_mixin_native_event_nc_calc_size_wparam_true(qtbot, monkeypatc
     assert calcParams.rgrc[0].bottom == 600
 
     # 2. Maximized window state: rect inset by resize border thickness
-    monkeypatch.setattr("qtframeless.core.frame_controller.isMaximized", lambda hWnd: True)
-    monkeypatch.setattr("qtframeless.core.frame_controller.isFullScreen", lambda hWnd: False)
+    monkeypatch.setattr("qtframelesskit.core.frame_controller.isMaximized", lambda hWnd: True)
+    monkeypatch.setattr("qtframelesskit.core.frame_controller.isFullScreen", lambda hWnd: False)
     monkeypatch.setattr(
-        "qtframeless.core.frame_controller.getResizeBorderThickness", lambda hWnd: 8
+        "qtframelesskit.core.frame_controller.getResizeBorderThickness", lambda hWnd: 8
     )
-    monkeypatch.setattr("qtframeless.core.frame_controller.Taskbar.isAutoHide", lambda: False)
+    monkeypatch.setattr("qtframelesskit.core.frame_controller.Taskbar.isAutoHide", lambda: False)
 
     eventHandled, resultCode = widget.nativeEvent(
         QByteArray(b"windows_generic_MSG"), messagePointer
@@ -802,8 +802,8 @@ def test_frameless_mixin_native_event_nc_calc_size_wparam_false_and_autohide_tas
     messagePointer = ctypes.addressof(syntheticMessage)
 
     # 1. Normal state with wParam=0 returns 0
-    monkeypatch.setattr("qtframeless.core.frame_controller.isMaximized", lambda hWnd: False)
-    monkeypatch.setattr("qtframeless.core.frame_controller.isFullScreen", lambda hWnd: False)
+    monkeypatch.setattr("qtframelesskit.core.frame_controller.isMaximized", lambda hWnd: False)
+    monkeypatch.setattr("qtframelesskit.core.frame_controller.isFullScreen", lambda hWnd: False)
 
     eventHandled, resultCode = widget.nativeEvent(
         QByteArray(b"windows_generic_MSG"), messagePointer
@@ -812,14 +812,14 @@ def test_frameless_mixin_native_event_nc_calc_size_wparam_false_and_autohide_tas
     assert resultCode == 0
 
     # 2. Maximized with auto-hide taskbar on TOP
-    monkeypatch.setattr("qtframeless.core.frame_controller.isMaximized", lambda hWnd: True)
-    monkeypatch.setattr("qtframeless.core.frame_controller.isFullScreen", lambda hWnd: False)
+    monkeypatch.setattr("qtframelesskit.core.frame_controller.isMaximized", lambda hWnd: True)
+    monkeypatch.setattr("qtframelesskit.core.frame_controller.isFullScreen", lambda hWnd: False)
     monkeypatch.setattr(
-        "qtframeless.core.frame_controller.getResizeBorderThickness", lambda hWnd: 8
+        "qtframelesskit.core.frame_controller.getResizeBorderThickness", lambda hWnd: 8
     )
-    monkeypatch.setattr("qtframeless.core.frame_controller.Taskbar.isAutoHide", lambda: True)
+    monkeypatch.setattr("qtframelesskit.core.frame_controller.Taskbar.isAutoHide", lambda: True)
     monkeypatch.setattr(
-        "qtframeless.core.frame_controller.Taskbar.getPosition",
+        "qtframelesskit.core.frame_controller.Taskbar.getPosition",
         lambda hWnd: Taskbar.TOP,
     )
 
@@ -841,7 +841,7 @@ def test_frameless_mixin_native_event_nc_calc_size_wparam_false_and_autohide_tas
         (Taskbar.RIGHT, "right", False),
     ]:
         monkeypatch.setattr(
-            "qtframeless.core.frame_controller.Taskbar.getPosition",
+            "qtframelesskit.core.frame_controller.Taskbar.getPosition",
             lambda hWnd, pos=position: pos,
         )
         taskbarRect = WIN32_RECT(0, 0, 800, 600)
@@ -903,7 +903,7 @@ def test_frameless_mixin_native_event_nc_hit_test_scaled_dpi(qtbot, monkeypatch)
 
     # Mock 192 DPI (2.0x scale -> scaled border width = round(5 * 192 / 96) = 10 px)
     monkeypatch.setattr(
-        "qtframeless.core.frame_controller.getDpiForWindow",
+        "qtframelesskit.core.frame_controller.getDpiForWindow",
         lambda hWnd: 192,
     )
 
@@ -915,7 +915,7 @@ def test_frameless_mixin_native_event_nc_hit_test_scaled_dpi(qtbot, monkeypatch)
     # Relative x = 7 is inside the 10px scaled left border (at 96 DPI it would be client area)
     scaledLeftPoint = QPoint(107, 200)
     monkeypatch.setattr(
-        "qtframeless.core.frame_controller.QCursor.pos",
+        "qtframelesskit.core.frame_controller.QCursor.pos",
         staticmethod(lambda: scaledLeftPoint),
     )
     eventHandled, hitCode = widget.nativeEvent(QByteArray(b"windows_generic_MSG"), messagePointer)
@@ -925,7 +925,7 @@ def test_frameless_mixin_native_event_nc_hit_test_scaled_dpi(qtbot, monkeypatch)
     # Relative x = 12 is outside the 10px border, should fall through to client area
     clientPoint = QPoint(112, 200)
     monkeypatch.setattr(
-        "qtframeless.core.frame_controller.QCursor.pos",
+        "qtframelesskit.core.frame_controller.QCursor.pos",
         staticmethod(lambda: clientPoint),
     )
     eventHandled, _ = widget.nativeEvent(QByteArray(b"windows_generic_MSG"), messagePointer)

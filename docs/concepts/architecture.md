@@ -1,6 +1,6 @@
 # Architecture
 
-`qtframeless` is structured into three clean architectural layers. This separation ensures that low-level Win32 ctypes calls remain isolated from high-level Qt widget ergonomics.
+`qtframelesskit` is structured into three clean architectural layers. This separation ensures that low-level Win32 ctypes calls remain isolated from high-level Qt widget ergonomics.
 
 ```text
 +-------------------------------------------------------------------------+
@@ -147,7 +147,7 @@ When the window is dragged between displays with different DPI scaling (e.g., fr
 
 ## Non-Invasive Qt Design
 
-`qtframeless` does not inject global hooks, modify Qt internals, or require C++ binary wheels:
+`qtframelesskit` does not inject global hooks, modify Qt internals, or require C++ binary wheels:
 
 - **Clean Subclassing**: All classes inherit cleanly from Qt base classes (`QMainWindow`, `QWidget`, `QDialog`).
 - **Standard Qt APIs**: You continue using `centralWidget()`, `layout()`, `menuBar()`, `show()`, and standard Qt signals/slots.

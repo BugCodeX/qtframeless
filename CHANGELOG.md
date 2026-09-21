@@ -15,7 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Integrated QMenuBar**: Native integration of `QMenuBar` directly into the title bar with custom spacing, non-invasive dragging, and Fluent UI dropdown styling.
 - **Cross-Qt Runtime Compatibility**: Complete decoupling and support for both PySide6 and PyQt6 via `qtpy`, including SIP null-dereference protection on native event loops and IntEnum property support.
 - **Dark/Light Theme Synchronization**: Automatic detection and synchronization of Windows system theme changes via registry events and `darkThemeChanged` signal.
-- **Public Version Exposure**: Exposed `qtframeless.__version__` at the package root.
+- **Public Version Exposure**: Exposed `qtframelesskit.__version__` at the package root.
 
 ### Changes
 
@@ -26,7 +26,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixes
 
 - **TitleBar Button Geometry**: Ensured the close button aligns flush with the top window border according to Windows UX standards while keeping menu bars non-invasive to window drag hit-testing.
-- **Platform Guard Execution Order**: Reordered platform check in `qtframeless/__init__.py` to immediately raise `PlatformNotSupportedError` on non-Windows platforms before attempting native imports.
+- **Platform Guard Execution Order**: Reordered platform check in `qtframelesskit/__init__.py` to immediately raise `PlatformNotSupportedError` on non-Windows platforms before attempting native imports.
 
 ### Documentation
 
@@ -38,6 +38,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ```bash
 # Install with preferred binding
-pip install qtframeless[pyside6]==0.1.0  # or qtframeless[pyqt6]==0.1.0
-python -c "import qtframeless; print(qtframeless.__version__)"
+pip install qtframelesskit[pyside6]==0.1.0  # or qtframelesskit[pyqt6]==0.1.0
+python -c "import qtframelesskit; print(qtframelesskit.__version__)"
 ```

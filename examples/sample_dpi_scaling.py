@@ -23,8 +23,8 @@ from qtpy.QtWidgets import (
     QWidget,
 )
 
-from qtframeless import FramelessMainWindow, WindowCornerPreference
-from qtframeless.native.win32_utils import getDpiForWindow, getResizeBorderThickness
+from qtframelesskit import FramelessMainWindow, WindowCornerPreference
+from qtframelesskit.native.win32_utils import getDpiForWindow, getResizeBorderThickness
 
 
 class DpiScalingDemoWindow(FramelessMainWindow):

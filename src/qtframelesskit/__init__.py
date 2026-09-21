@@ -3,17 +3,17 @@
 import contextlib
 import sys
 
-from qtframeless.exceptions import PlatformNotSupportedError
+from qtframelesskit.exceptions import PlatformNotSupportedError
 
 __version__ = "0.1.0"
 
 if sys.platform != "win32":
-    raise PlatformNotSupportedError("qtframeless only supports Windows platforms.")
+    raise PlatformNotSupportedError("qtframelesskit only supports Windows platforms.")
 
-from qtframeless.native.win32_types import WindowCornerPreference, WindowEffect
+from qtframelesskit.native.win32_types import WindowCornerPreference, WindowEffect
 
 with contextlib.suppress(ImportError):
-    from qtframeless.windows import (
+    from qtframelesskit.windows import (
         AcrylicWindowMixin,  # noqa: F401
         FramelessAcrylicDialog,  # noqa: F401
         FramelessAcrylicMainWindow,  # noqa: F401

@@ -15,7 +15,7 @@ from qtpy.QtCore import QByteArray, QPoint, QRect
 from qtpy.QtGui import QCursor
 from qtpy.QtWidgets import QWidget
 
-from qtframeless.native.win32_types import (
+from qtframelesskit.native.win32_types import (
     LPNCCALCSIZE_PARAMS,
     TME_LEAVE,
     TME_NONCLIENT,
@@ -23,7 +23,7 @@ from qtframeless.native.win32_types import (
     WM_DPICHANGED,
     WM_NCMOUSELEAVE,
 )
-from qtframeless.native.win32_utils import (
+from qtframelesskit.native.win32_utils import (
     Taskbar,
     getDpiForWindow,
     getResizeBorderThickness,
@@ -32,7 +32,7 @@ from qtframeless.native.win32_utils import (
 )
 
 if TYPE_CHECKING:
-    from qtframeless.windows.title_bar import TitleBar
+    from qtframelesskit.windows.title_bar import TitleBar
 
 __all__ = ["WindowFrameController"]
 

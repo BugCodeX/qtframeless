@@ -8,11 +8,11 @@ from qtpy.QtCore import QEvent, Qt
 from qtpy.QtGui import QColor, QPalette
 from qtpy.QtWidgets import QMenuBar, QVBoxLayout, QWidget
 
-from qtframeless.native.win32_types import DWMWA_COLOR_NONE
-from qtframeless.native.win32_utils import isGreaterEqualWin11
-from qtframeless.native.window_effect import WindowsEffectHelper
-from qtframeless.windows.base_widget import BaseDialog, BaseMainWindow, BaseWidget
-from qtframeless.windows.title_bar import TitleBar
+from qtframelesskit.native.win32_types import DWMWA_COLOR_NONE
+from qtframelesskit.native.win32_utils import isGreaterEqualWin11
+from qtframelesskit.native.window_effect import WindowsEffectHelper
+from qtframelesskit.windows.base_widget import BaseDialog, BaseMainWindow, BaseWidget
+from qtframelesskit.windows.title_bar import TitleBar
 
 
 def _configureTitleBarForMaterial(titleBar: TitleBar | None) -> None:

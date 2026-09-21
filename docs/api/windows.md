@@ -1,5 +1,5 @@
 # Windows API Reference
 
-This page provides the API reference for window implementations in `qtframeless.windows.window`.
+This page provides the API reference for window implementations in `qtframelesskit.windows.window`.
 
-::: qtframeless.windows.window
+::: qtframelesskit.windows.window

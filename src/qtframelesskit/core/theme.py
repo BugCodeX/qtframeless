@@ -1,4 +1,4 @@
-"""Theme management controller for qtframeless window components.
+"""Theme management controller for qtframelesskit window components.
 
 Encapsulates OS theme detection, dark mode toggling, title bar synchronization,
 and QPalette generation for standard opaque and material transparent windows.
@@ -10,7 +10,7 @@ from qtpy.QtCore import QObject, Qt, Signal
 from qtpy.QtGui import QColor, QPalette
 from qtpy.QtWidgets import QWidget
 
-from qtframeless.native.window_effect import WindowsEffectHelper
+from qtframelesskit.native.window_effect import WindowsEffectHelper
 
 __all__ = ["ThemeController"]
 

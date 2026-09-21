@@ -1,4 +1,4 @@
-# AGENTS.md — qtframeless
+# AGENTS.md — qtframelesskit
 
 ---
 

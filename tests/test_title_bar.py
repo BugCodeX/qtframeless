@@ -27,7 +27,7 @@ from qtpy.QtWidgets import (
     QWidget,
 )
 
-from qtframeless.windows.title_bar import (
+from qtframelesskit.windows.title_bar import (
     CloseButton,
     FullScreenButton,
     MaximizeButton,
@@ -35,7 +35,7 @@ from qtframeless.windows.title_bar import (
     TitleBar,
     VectorButton,
 )
-from qtframeless.windows.window import FramelessMainWindow
+from qtframelesskit.windows.window import FramelessMainWindow
 
 
 def test_titlebar_initial_center_widget_is_none(qtbot):
@@ -572,8 +572,8 @@ def test_titlebar_title_font_dpi_scaling(qtbot):
 
 def test_buttons_module_direct_imports() -> None:
     """Verify all vector button classes are directly importable from buttons module."""
-    import qtframeless.windows.buttons as buttonsModule
-    import qtframeless.windows.title_bar as titleBarModule
+    import qtframelesskit.windows.buttons as buttonsModule
+    import qtframelesskit.windows.title_bar as titleBarModule
 
     assert buttonsModule.VectorButton is titleBarModule.VectorButton
     assert buttonsModule.MinimizeButton is titleBarModule.MinimizeButton
@@ -1359,7 +1359,7 @@ def test_maximize_button_vector_painting_normal_and_restore(qtbot, monkeypatch):
     mockClassNormal = MagicMock(return_value=mockPainterNormal)
     mockClassNormal.RenderHint = QPainter.RenderHint
     monkeypatch.setattr(
-        "qtframeless.windows.buttons.QPainter",
+        "qtframelesskit.windows.buttons.QPainter",
         mockClassNormal,
     )
     maxButton.paintEvent(QPaintEvent(maxButton.rect()))
@@ -1378,7 +1378,7 @@ def test_maximize_button_vector_painting_normal_and_restore(qtbot, monkeypatch):
     mockClassMaximized = MagicMock(return_value=mockPainterMaximized)
     mockClassMaximized.RenderHint = QPainter.RenderHint
     monkeypatch.setattr(
-        "qtframeless.windows.buttons.QPainter",
+        "qtframelesskit.windows.buttons.QPainter",
         mockClassMaximized,
     )
     maxButton.paintEvent(QPaintEvent(maxButton.rect()))
@@ -1471,7 +1471,7 @@ def test_vector_button_hover_and_pressed_styling_and_painting(qtbot, monkeypatch
     mockClassMin = MagicMock(return_value=mockPainterMinNormal)
     mockClassMin.RenderHint = QPainter.RenderHint
     monkeypatch.setattr(
-        "qtframeless.windows.buttons.QPainter",
+        "qtframelesskit.windows.buttons.QPainter",
         mockClassMin,
     )
     monkeypatch.setattr(minButton, "underMouse", lambda: False)
@@ -1491,7 +1491,7 @@ def test_vector_button_hover_and_pressed_styling_and_painting(qtbot, monkeypatch
     mockClassClose = MagicMock(return_value=mockPainterCloseNormal)
     mockClassClose.RenderHint = QPainter.RenderHint
     monkeypatch.setattr(
-        "qtframeless.windows.buttons.QPainter",
+        "qtframelesskit.windows.buttons.QPainter",
         mockClassClose,
     )
     monkeypatch.setattr(closeButton, "underMouse", lambda: False)

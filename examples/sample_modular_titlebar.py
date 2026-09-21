@@ -26,7 +26,7 @@ from qtpy.QtWidgets import (
     QWidget,
 )
 
-from qtframeless import FramelessMainWindow, WindowCornerPreference
+from qtframelesskit import FramelessMainWindow, WindowCornerPreference
 
 
 class ModularTitleBarWindow(FramelessMainWindow):

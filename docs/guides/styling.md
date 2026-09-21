@@ -1,6 +1,6 @@
 # Materials & Styling
 
-`qtframeless` provides deep integration with native Windows desktop composition features, including Windows 11 **Mica**, **Mica Alt**, and **Fluent Acrylic** blur-behind backdrops, DWM corner rounding, custom border colors, and automatic dark/light theme synchronization.
+`qtframelesskit` provides deep integration with native Windows desktop composition features, including Windows 11 **Mica**, **Mica Alt**, and **Fluent Acrylic** blur-behind backdrops, DWM corner rounding, custom border colors, and automatic dark/light theme synchronization.
 
 ---
 
@@ -15,7 +15,7 @@ Use `FramelessMicaMainWindow`, `FramelessMicaWindow`, or `FramelessMicaDialog`:
 ```python linenums="1"
 import sys
 from PySide6.QtWidgets import QApplication, QLabel
-from qtframeless import FramelessMicaMainWindow, WindowCornerPreference
+from qtframelesskit import FramelessMicaMainWindow, WindowCornerPreference
 
 
 class MicaWindow(FramelessMicaMainWindow):
@@ -73,7 +73,7 @@ Use `FramelessAcrylicMainWindow`, `FramelessAcrylicWindow`, or `FramelessAcrylic
 ```python linenums="1"
 import sys
 from PySide6.QtWidgets import QApplication, QLabel
-from qtframeless import FramelessAcrylicMainWindow, WindowCornerPreference
+from qtframelesskit import FramelessAcrylicMainWindow, WindowCornerPreference
 
 
 class AcrylicWindow(FramelessAcrylicMainWindow):
@@ -130,7 +130,7 @@ Windows 11 allows applications to specify their DWM window corner rounding prefe
 Configure corner rounding through the Qt property or method:
 
 ```python
-from qtframeless import WindowCornerPreference
+from qtframelesskit import WindowCornerPreference
 
 # Using property syntax
 window.windowCornerPreference = WindowCornerPreference.ROUND
@@ -143,7 +143,7 @@ window.setWindowCornerPreference(WindowCornerPreference.ROUND_SMALL)
 
 ## Native Border Color
 
-On Windows 11 (Build 22000+), DWM supports custom window border colors. `qtframeless` exposes this through the `borderColor` property:
+On Windows 11 (Build 22000+), DWM supports custom window border colors. `qtframelesskit` exposes this through the `borderColor` property:
 
 ```python
 from PySide6.QtGui import QColor
@@ -162,7 +162,7 @@ window.setBorderColor(None)
 
 ## Dark & Light Theme Synchronization
 
-`qtframeless` automatically detects the Windows system color scheme using registry monitoring and native `WM_SETTINGCHANGE` notifications.
+`qtframelesskit` automatically detects the Windows system color scheme using registry monitoring and native `WM_SETTINGCHANGE` notifications.
 
 ### Reacting to Theme Changes
 

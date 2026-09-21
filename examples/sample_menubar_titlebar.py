@@ -21,7 +21,7 @@ from qtpy.QtWidgets import (
     QVBoxLayout,
 )
 
-from qtframeless import FramelessMainWindow, WindowCornerPreference
+from qtframelesskit import FramelessMainWindow, WindowCornerPreference
 
 
 class Window(FramelessMainWindow):

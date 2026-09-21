@@ -163,7 +163,7 @@ def test_example_materials_instantiation(qtbot):
     from examples.materials.sample_acrylic import AcrylicWindow
     from examples.materials.sample_mica import MicaWindow
     from examples.materials.sample_mica_alt import MicaAltWindow
-    from qtframeless import (
+    from qtframelesskit import (
         FramelessAcrylicMainWindow,
         FramelessMicaMainWindow,
     )

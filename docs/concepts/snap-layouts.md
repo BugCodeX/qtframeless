@@ -2,7 +2,7 @@
 
 Windows 11 introduced **Snap Layouts**: an operating system flyout that appears when hovering over the maximize button of any top-level window, allowing users to effortlessly tile windows into 2, 3, or 4 pane arrangements.
 
-This document explains the technical challenges of supporting Snap Layouts in custom frameless Qt windows and how `qtframeless` implements full Snap Layout support.
+This document explains the technical challenges of supporting Snap Layouts in custom frameless Qt windows and how `qtframelesskit` implements full Snap Layout support.
 
 ---
 

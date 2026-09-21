@@ -1,6 +1,6 @@
 ---
 name: Bug Report
-about: Create a report to help us improve qtframeless
+about: Create a report to help us improve qtframelesskit
 title: "[Bug] "
 labels: ["bug"]
 assignees: ""
@@ -14,7 +14,7 @@ assignees: ""
 
 | Property | Value |
 | :--- | :--- |
-| **qtframeless Version** | <!-- e.g. 0.1.0 --> |
+| **qtframelesskit Version** | <!-- e.g. 0.1.0 --> |
 | **Windows OS & Build** | <!-- e.g. Windows 11 23H2 Build 22631 / Windows 10 22H2 Build 19045 --> |
 | **Qt Binding & Version** | <!-- e.g. PySide6 6.8.0 / PyQt6 6.7.0 / PyQt5 5.15.10 --> |
 | **Python Version** | <!-- e.g. 3.11.9 --> |
@@ -37,7 +37,7 @@ assignees: ""
 ```python
 import sys
 from PySide6.QtWidgets import QApplication
-from qtframeless import FramelessMainWindow
+from qtframelesskit import FramelessMainWindow
 
 app = QApplication(sys.argv)
 window = FramelessMainWindow()

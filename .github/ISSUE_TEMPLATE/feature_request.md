@@ -1,6 +1,6 @@
 ---
 name: Feature Request
-about: Suggest an idea or feature enhancement for qtframeless
+about: Suggest an idea or feature enhancement for qtframelesskit
 title: "[Feature] "
 labels: ["enhancement"]
 assignees: ""

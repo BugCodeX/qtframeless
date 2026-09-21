@@ -1,6 +1,6 @@
 # Window Types
 
-`qtframeless` provides four primary window classes tailored to different application structures:
+`qtframelesskit` provides four primary window classes tailored to different application structures:
 
 | Class | Base Qt Class | Primary Use Case |
 | --- | --- | --- |
@@ -23,7 +23,7 @@ All four classes inherit from [`FramelessWindowMixin`](../api/core.md), providin
 import sys
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QApplication, QLabel, QPushButton, QVBoxLayout
-from qtframeless import FramelessMainWindow, WindowCornerPreference
+from qtframelesskit import FramelessMainWindow, WindowCornerPreference
 
 
 class MainWindow(FramelessMainWindow):
@@ -91,7 +91,7 @@ if centralWidget is not None and centralWidget.layout() is not None:
 import sys
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QApplication, QLabel, QPushButton, QVBoxLayout
-from qtframeless import FramelessWindow, WindowCornerPreference
+from qtframelesskit import FramelessWindow, WindowCornerPreference
 
 
 class UtilityWindow(FramelessWindow):
@@ -140,7 +140,7 @@ from PySide6.QtWidgets import (
     QLabel,
     QVBoxLayout,
 )
-from qtframeless import FramelessDialog, WindowCornerPreference
+from qtframelesskit import FramelessDialog, WindowCornerPreference
 
 
 class ConfirmationDialog(FramelessDialog):
@@ -181,7 +181,7 @@ class ConfirmationDialog(FramelessDialog):
 `FramelessWidget` is the base widget class implementing the layout logic for `FramelessWindow`. `FramelessWindow` is an alias of `FramelessWidget`. You can instantiate or subclass either depending on your semantic preference.
 
 ```python
-from qtframeless import FramelessWidget
+from qtframelesskit import FramelessWidget
 
 widget = FramelessWidget(hint=["min", "max", "close"])
 widget.setWindowTitle("Generic Widget Window")
@@ -229,7 +229,7 @@ window.setPressToMove(True)
 ### Windows 11 Styling Attributes
 
 ```python
-from qtframeless import WindowCornerPreference
+from qtframelesskit import WindowCornerPreference
 
 # Corner rounding: ROUND, ROUND_SMALL, DO_NOT_ROUND, DEFAULT
 window.windowCornerPreference = WindowCornerPreference.ROUND
