@@ -9,8 +9,36 @@ on:
       - main
 
 jobs:
-  test:
-    name: Test (Python ${{ matrix.python-version }})
+  quality:
+    name: Quality
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install uv and Python 3.11
+        uses: astral-sh/setup-uv@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: uv sync --extra dev --extra docs
+
+      - name: Lint check
+        run: uv run ruff check .
+
+      - name: Format check
+        run: uv run ruff format --check .
+
+      - name: Type check
+        run: uv run pyright
+
+      - name: Documentation build
+        run: uv run mkdocs build --strict
+
+  test-windows:
+    name: Test Windows (Python ${{ matrix.python-version }})
     runs-on: windows-latest
 
     strategy:
@@ -22,7 +50,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Install uv
+      - name: Install uv and Python ${{ matrix.python-version }}
         uses: astral-sh/setup-uv@v5
         with:
           python-version: ${{ matrix.python-version }}
@@ -30,11 +58,24 @@ jobs:
       - name: Install dependencies
         run: uv sync --extra test --extra pyside6
 
-      - name: Lint check
-        run: uv run ruff check .
-
-      - name: Type check
-        run: uv run pyright
-
       - name: Unit tests
         run: uv run pytest
+
+  test-platform-linux:
+    name: Test Platform Restriction (Linux)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install uv and Python 3.11
+        uses: astral-sh/setup-uv@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: uv sync --extra test
+
+      - name: Test platform restriction
+        run: uv run pytest tests/test_platform.py
