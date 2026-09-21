@@ -4,10 +4,11 @@ import contextlib
 import sys
 
 from qtframeless.exceptions import PlatformNotSupportedError
-from qtframeless.native.win32_types import WindowCornerPreference, WindowEffect
 
 if sys.platform != "win32":
     raise PlatformNotSupportedError("qtframeless only supports Windows platforms.")
+
+from qtframeless.native.win32_types import WindowCornerPreference, WindowEffect
 
 with contextlib.suppress(ImportError):
     from qtframeless.windows import (

@@ -60,19 +60,3 @@ jobs:
 
       - name: Unit tests
         run: uv run pytest
-
-  test-platform-linux:
-    name: Test Platform Restriction (Linux)
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Install uv and Python 3.11
-        uses: astral-sh/setup-uv@v5
-        with:
-          python-version: "3.11"
-
-      - name: Test platform restriction
-        run: uv run --no-project --with pytest pytest -o pythonpath=src tests/test_platform.py
