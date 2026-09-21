@@ -6,6 +6,7 @@ repos:
       - id: trailing-whitespace
       - id: end-of-file-fixer
       - id: check-yaml
+        args: [--unsafe]
       - id: check-toml
       - id: check-added-large-files
         args: ["--maxkb=2048"]
@@ -13,13 +14,14 @@ repos:
 
   # 2. Ruff: Fast linter & formatter (inheriting rules from root pyproject.toml)
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.9.9
+    rev: v0.16.8
     hooks:
       - id: ruff
         args: ["--fix"]
       - id: ruff-format
+        types_or: [python, pyi]
 
-  # 3. Pyright: Static type checking using the workspace environment
+  # 3. Local verification: Pyright, Pytest, Mkdocs
   - repo: local
     hooks:
       - id: pyright
@@ -27,6 +29,20 @@ repos:
         entry: uv run pyright
         language: system
         types: [python]
+        pass_filenames: false
+
+      - id: pytest
+        name: pytest
+        entry: uv run pytest
+        language: system
+        types: [python]
+        pass_filenames: false
+
+      - id: mkdocs
+        name: mkdocs build
+        entry: uv run mkdocs build --strict
+        language: system
+        files: ^(docs/|mkdocs\.yml)
         pass_filenames: false
 
   # 4. Conventional Commits validation enforcing commit-hygiene skill
