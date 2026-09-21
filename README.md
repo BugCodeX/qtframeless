@@ -282,6 +282,14 @@ uv build
 
 ---
 
+## Acknowledgments & Inspiration
+
+Special thanks and credit to the open-source projects that inspired and informed this framework:
+
+- [qwindowkit](https://github.com/stdware/qwindowkit) by stdware: An outstanding C++ window customization framework for Qt, which served as a primary architectural inspiration for native frameless mechanics, Windows 11 Snap Layout hit-testing, and modern DWM composition patterns.
+
+---
+
 ## License
 
 This project is licensed under the terms of the [MIT License](LICENSE).
