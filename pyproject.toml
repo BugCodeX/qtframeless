@@ -1,0 +1,187 @@
+[project]
+name = "qtframeless"
+version = "0.1.0"
+description = "Modern, cross-Qt frameless window framework for Windows in pure Python."
+readme = "README.md"
+requires-python = ">=3.10"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [{ name = "BugCodeX" }]
+maintainers = [{ name = "BugCodeX", email = "busine015@gmail.com" }]
+keywords = ["frameless", "pyqt5", "pyqt6", "pyside6", "qt", "snap-layouts", "win32"]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Environment :: Win32 (MS Windows)",
+  "Intended Audience :: Developers",
+  "Operating System :: Microsoft :: Windows",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Topic :: Software Development :: User Interfaces",
+]
+dependencies = [
+  "pywin32>=312; platform_system=='Windows'",
+  "qtpy>=2.0.0",
+]
+
+[project.urls]
+Documentation = "https://qtframeless.readthedocs.io/"
+Homepage = "https://github.com/BugCodeX/qtframeless"
+Issues = "https://github.com/BugCodeX/qtframeless/issues"
+Repository = "https://github.com/BugCodeX/qtframeless"
+
+[project.optional-dependencies]
+pyqt6 = [
+  "PyQt6>=6.11.0",
+]
+pyside6 = [
+  "PySide6>=6.11.2",
+]
+test = [
+  "pytest>=9.0.3",
+  "pytest-cov>=7.1.0",
+  "pytest-mock>=3.14.0",
+  "pytest-qt>=4.2.0",
+]
+
+[dependency-groups]
+dev = [
+  "pre-commit>=4.0.1",
+  "pyright>=1.1.414",
+  "pytest>=9.0.3",
+  "pytest-cov>=7.1.0",
+  "pytest-mock>=3.14.0",
+  "pytest-qt>=4.2.0",
+  "ruff>=0.16.8",
+]
+
+# ============================================================
+# build-system
+# ============================================================
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+# ============================================================
+# coverage
+# ============================================================
+[tool.coverage.run]
+source = ["qtframeless"]
+omit = [
+  "examples/*",
+  "tests/*",
+]
+
+# ============================================================
+# pyright — type checker
+# ============================================================
+[tool.pyright]
+include = [
+  "src/qtframeless",
+  "tests",
+]
+pythonVersion = "3.11"
+extraPaths = [
+  "src/qtframeless",
+  ".",
+]
+typeCheckingMode = "basic"
+
+reportAttributeAccessIssue = false
+reportArgumentType = false
+reportMissingTypeArgument = false
+reportUnknownMemberType = false
+reportMatchNotExhaustive = false
+reportPrivateImportUsage = false
+reportOptionalMemberAccess = false
+reportGeneralTypeIssues = false
+
+executionEnvironments = [
+  { root = "tests", reportPrivateUsage = false, reportMissingTypeStubs = false },
+  { root = "examples", reportMissingTypeStubs = false },
+]
+
+# ============================================================
+# pytest
+# ============================================================
+[tool.pytest.ini_options]
+addopts = [
+  "-ra",
+  "--strict-markers",
+  "--strict-config",
+  "--import-mode=importlib",
+]
+norecursedirs = ["examples", "build", "dist", "htmlcov", ".git"]
+python_files = ["test_*.py"]
+
+pythonpath = ["src"]
+testpaths = ["tests"]
+
+# ============================================================
+# ruff — linter and formatter
+# ============================================================
+[tool.ruff]
+target-version = "py310"
+line-length = 100
+include = [
+  "src/**/*.py",
+  "examples/**/*.py",
+  "tests/**/*.py",
+]
+
+[tool.ruff.lint]
+select = [
+  "D",  # pydocstyle
+  "F",  # Pyflakes
+  "E",  # pycodestyle errors
+  "W",  # pycodestyle warnings
+  "I",  # isort
+  "UP",  # pyupgrade
+  "B",  # flake8-bugbear
+  "SIM",  # flake8-simplify
+  "C4",  # flake8-comprehensions
+]
+
+ignore = [
+  "ANN401",  # Allow explicit Any.
+  "E402",  # import not at top of file
+  "D100",  # missing module docstring
+  "E501",  # line too long
+  "D104",  # missing public package docstring
+  "D107",  # Skip docstring for __init__.
+  "D202",  # no blank lines after docstring
+  "F403",  # star imports
+  "SIM102",  # nested ifs (sometimes clearer)
+  "COM812",  # trailing comma (conflicts with formatter)
+  "ISC001",  # implicit string concat (conflicts with formatter)
+  "TD002",  # Skip author in TODO.
+  "TD003",  # Skip issue link in TODO.
+]
+
+[tool.ruff.lint.pydocstyle]
+convention = "numpy"
+
+[tool.ruff.lint.per-file-ignores]
+"packages/*/tests/**" = [
+  "D100",  # missing module docstring
+  "D101",  # missing class docstring
+  "D102",  # missing method docstring
+  "D103",  # missing function docstring
+]
+
+"examples/**" = [
+  "D100",  # missing module docstring
+  "D101",  # missing class docstring
+  "D102",  # missing method docstring
+  "D103",  # missing function docstring
+]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+skip-magic-trailing-comma = false
+docstring-code-format = true
+
+[tool.setuptools.packages.find]
+where = ["src"]

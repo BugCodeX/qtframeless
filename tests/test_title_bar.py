@@ -1,0 +1,564 @@
+"""Unit and integration tests for modern modular TitleBar features.
+
+Covers modular center container hosting, intelligent drag hit-testing,
+and dynamic parent theme adaptation.
+"""
+
+from unittest.mock import MagicMock
+
+from qtpy.QtCore import QEvent, QPointF, Qt, Signal
+from qtpy.QtGui import QColor, QFont, QMouseEvent, QPalette
+from qtpy.QtWidgets import QLabel, QLineEdit, QSizePolicy, QWidget
+
+from qtframeless.windows.title_bar import TitleBar, VectorButton
+
+
+def test_titlebar_initial_center_widget_is_none(qtbot):
+    """Verify that a freshly initialized TitleBar has no center widget installed.
+
+    Parameters
+    ----------
+    qtbot : pytestqt.qtbot.QtBot
+        Pytest-qt fixture for widget lifecycle management.
+    """
+    window = QWidget()
+    qtbot.addWidget(window)
+    titleBar = TitleBar(window)
+
+    assert titleBar.getCenterWidget() is None
+
+
+def test_titlebar_set_center_widget_installs_and_retrieves(qtbot):
+    """Verify setCenterWidget installs a custom widget with expanding size policy.
+
+    Parameters
+    ----------
+    qtbot : pytestqt.qtbot.QtBot
+        Pytest-qt fixture for widget lifecycle management.
+    """
+    window = QWidget()
+    qtbot.addWidget(window)
+    titleBar = TitleBar(window)
+
+    customWidget = QLabel("Search Bar", titleBar)
+    titleBar.setCenterWidget(customWidget)
+
+    retrievedWidget = titleBar.getCenterWidget()
+    assert retrievedWidget is customWidget
+    assert retrievedWidget.sizePolicy().horizontalPolicy() == QSizePolicy.Policy.Expanding
+
+
+def test_titlebar_set_center_widget_replaces_existing(qtbot):
+    """Verify setCenterWidget removes the old widget when replacing it with a new one.
+
+    Parameters
+    ----------
+    qtbot : pytestqt.qtbot.QtBot
+        Pytest-qt fixture for widget lifecycle management.
+    """
+    window = QWidget()
+    qtbot.addWidget(window)
+    titleBar = TitleBar(window)
+
+    firstWidget = QLabel("First", titleBar)
+    secondWidget = QLineEdit(titleBar)
+
+    titleBar.setCenterWidget(firstWidget)
+    assert titleBar.getCenterWidget() is firstWidget
+
+    titleBar.setCenterWidget(secondWidget)
+    assert titleBar.getCenterWidget() is secondWidget
+    assert firstWidget.parent() is None
+
+
+def test_titlebar_remove_center_widget_detaches_without_destruction(qtbot):
+    """Verify removeCenterWidget detaches the widget, returns it, and leaves it intact.
+
+    Parameters
+    ----------
+    qtbot : pytestqt.qtbot.QtBot
+        Pytest-qt fixture for widget lifecycle management.
+    """
+    window = QWidget()
+    qtbot.addWidget(window)
+    titleBar = TitleBar(window)
+
+    customWidget = QLabel("Detachable", titleBar)
+    titleBar.setCenterWidget(customWidget)
+
+    removedWidget = titleBar.removeCenterWidget()
+    assert removedWidget is customWidget
+    assert titleBar.getCenterWidget() is None
+    assert removedWidget.parent() is None
+
+    # Removing again when empty returns None
+    assert titleBar.removeCenterWidget() is None
+
+
+def test_titlebar_set_center_widget_none_clears(qtbot):
+    """Verify setCenterWidget with None clears the center widget.
+
+    Parameters
+    ----------
+    qtbot : pytestqt.qtbot.QtBot
+        Pytest-qt fixture for widget lifecycle management.
+    """
+    window = QWidget()
+    qtbot.addWidget(window)
+    titleBar = TitleBar(window)
+
+    customWidget = QLabel("Temporary", titleBar)
+    titleBar.setCenterWidget(customWidget)
+    assert titleBar.getCenterWidget() is customWidget
+
+    titleBar.setCenterWidget(None)
+    assert titleBar.getCenterWidget() is None
+
+
+def test_mouse_press_on_background_and_labels_initiates_system_move(qtbot, monkeypatch):
+    """Verify left mouse click on background and labels triggers startSystemMove.
+
+    Parameters
+    ----------
+    qtbot : pytestqt.qtbot.QtBot
+        Pytest-qt fixture for widget lifecycle management.
+    monkeypatch : pytest.MonkeyPatch
+        Pytest fixture for monkeypatching methods.
+    """
+    window = QWidget()
+    qtbot.addWidget(window)
+    window.resize(600, 400)
+    window.show()
+
+    titleBar = TitleBar(window)
+    titleBar.resize(600, 40)
+    titleBar.setTitle("My Title")
+    titleBar.show()
+
+    mockWindowHandle = MagicMock()
+    monkeypatch.setattr(window, "windowHandle", lambda: mockWindowHandle)
+
+    # 1. Click on empty background area of title bar
+    qtbot.mouseClick(titleBar, Qt.MouseButton.LeftButton, pos=titleBar.rect().center())
+    assert mockWindowHandle.startSystemMove.call_count == 1
+
+    # 2. Click on title label
+    mockWindowHandle.reset_mock()
+    titleLabel = titleBar.getTitle()
+    qtbot.mouseClick(titleLabel, Qt.MouseButton.LeftButton)
+    assert mockWindowHandle.startSystemMove.call_count == 1
+
+    # 3. Click on icon label
+    mockWindowHandle.reset_mock()
+    iconLabel = titleBar.getIcon()
+    qtbot.mouseClick(iconLabel, Qt.MouseButton.LeftButton)
+    assert mockWindowHandle.startSystemMove.call_count == 1
+
+
+def test_mouse_press_on_center_interactive_widget_bypasses_system_move(qtbot, monkeypatch):
+    """Verify left click on interactive center widget does not call startSystemMove.
+
+    Parameters
+    ----------
+    qtbot : pytestqt.qtbot.QtBot
+        Pytest-qt fixture for widget lifecycle management.
+    monkeypatch : pytest.MonkeyPatch
+        Pytest fixture for monkeypatching methods.
+    """
+    window = QWidget()
+    qtbot.addWidget(window)
+    window.resize(600, 400)
+    window.show()
+
+    titleBar = TitleBar(window)
+    titleBar.resize(600, 40)
+
+    centerEditor = QLineEdit(titleBar)
+    titleBar.setCenterWidget(centerEditor)
+    titleBar.show()
+    centerEditor.show()
+    centerEditor.setGeometry(100, 5, 200, 30)
+
+    mockWindowHandle = MagicMock()
+    monkeypatch.setattr(window, "windowHandle", lambda: mockWindowHandle)
+
+    # Click directly on TitleBar at coordinate where centerEditor resides
+    editorCenter = centerEditor.geometry().center()
+    pressEvent = QMouseEvent(
+        QEvent.Type.MouseButtonPress,
+        QPointF(editorCenter),
+        QPointF(editorCenter),
+        Qt.MouseButton.LeftButton,
+        Qt.MouseButton.LeftButton,
+        Qt.KeyboardModifier.NoModifier,
+    )
+    titleBar.mousePressEvent(pressEvent)
+    assert mockWindowHandle.startSystemMove.call_count == 0
+
+
+def test_mouse_press_disabled_when_press_to_move_false(qtbot, monkeypatch):
+    """Verify system move is not initiated when pressToMove is disabled.
+
+    Parameters
+    ----------
+    qtbot : pytestqt.qtbot.QtBot
+        Pytest-qt fixture for widget lifecycle management.
+    monkeypatch : pytest.MonkeyPatch
+        Pytest fixture for monkeypatching methods.
+    """
+    window = QWidget()
+    qtbot.addWidget(window)
+    window.resize(600, 400)
+    window.show()
+
+    titleBar = TitleBar(window)
+    titleBar.setPressToMove(False)
+
+    mockWindowHandle = MagicMock()
+    monkeypatch.setattr(window, "windowHandle", lambda: mockWindowHandle)
+
+    qtbot.mouseClick(titleBar, Qt.MouseButton.LeftButton, pos=titleBar.rect().center())
+    assert mockWindowHandle.startSystemMove.call_count == 0
+
+
+def test_mouse_double_click_on_center_interactive_widget_does_not_maximize(qtbot):
+    """Verify double clicking an interactive center widget does not toggle maximize.
+
+    Parameters
+    ----------
+    qtbot : pytestqt.qtbot.QtBot
+        Pytest-qt fixture for widget lifecycle management.
+    """
+    window = QWidget()
+    qtbot.addWidget(window)
+    window.resize(600, 400)
+    window.show()
+
+    titleBar = TitleBar(window)
+    titleBar.resize(600, 40)
+
+    centerEditor = QLineEdit(titleBar)
+    titleBar.setCenterWidget(centerEditor)
+    titleBar.show()
+    centerEditor.show()
+    centerEditor.setGeometry(100, 5, 200, 30)
+
+    assert not window.isMaximized()
+
+    # Double click on TitleBar at coordinates of interactive QLineEdit
+    editorCenter = centerEditor.geometry().center()
+    dclickEvent = QMouseEvent(
+        QEvent.Type.MouseButtonDblClick,
+        QPointF(editorCenter),
+        QPointF(editorCenter),
+        Qt.MouseButton.LeftButton,
+        Qt.MouseButton.LeftButton,
+        Qt.KeyboardModifier.NoModifier,
+    )
+    titleBar.mouseDoubleClickEvent(dclickEvent)
+    assert not window.isMaximized()
+
+    # Double click on TitleBar title label DOES maximize
+    titleLabelCenter = QPointF(titleBar.getTitle().geometry().center())
+    titleDclickEvent = QMouseEvent(
+        QEvent.Type.MouseButtonDblClick,
+        titleLabelCenter,
+        titleLabelCenter,
+        Qt.MouseButton.LeftButton,
+        Qt.MouseButton.LeftButton,
+        Qt.KeyboardModifier.NoModifier,
+    )
+    titleBar.mouseDoubleClickEvent(titleDclickEvent)
+    assert window.isMaximized()
+
+
+def test_vector_button_set_dark_theme(qtbot):
+    """Verify VectorButton setDarkTheme toggles stroke colors and targets.
+
+    Parameters
+    ----------
+    qtbot : pytestqt.qtbot.QtBot
+        Pytest-qt fixture for widget lifecycle management.
+    """
+    button = VectorButton()
+    qtbot.addWidget(button)
+
+    # Initial light mode state
+    assert button.styleSheet() == ""
+    assert button.getGlyphColor().name() == "#333333"
+    assert button.getHoverColor() == QColor("#cfcfcf")
+
+    # Switch to dark theme
+    button.setDarkTheme(True)
+    assert button.styleSheet() == ""
+    assert button.getGlyphColor().name() == "#ffffff"
+    assert button.getHoverColor() == QColor("#3f3f3f")
+
+    # Switch back to light theme
+    button.setDarkTheme(False)
+    assert button.styleSheet() == ""
+    assert button.getGlyphColor().name() == "#333333"
+    assert button.getHoverColor() == QColor("#cfcfcf")
+
+
+def test_titlebar_safe_initialization_without_dark_theme_signal(qtbot):
+    """Verify TitleBar initializes safely with a parent lacking darkThemeChanged signal.
+
+    Parameters
+    ----------
+    qtbot : pytestqt.qtbot.QtBot
+        Pytest-qt fixture for widget lifecycle management.
+    """
+    plainParent = QWidget()
+    qtbot.addWidget(plainParent)
+
+    assert not hasattr(plainParent, "darkThemeChanged")
+    titleBar = TitleBar(plainParent)
+    assert titleBar.parent() is plainParent
+
+
+def test_titlebar_handle_theme_changed_updates_labels_and_buttons(qtbot):
+    """Verify _handleThemeChanged updates label palette colors and button stroke colors.
+
+    Parameters
+    ----------
+    qtbot : pytestqt.qtbot.QtBot
+        Pytest-qt fixture for widget lifecycle management.
+    """
+    window = QWidget()
+    qtbot.addWidget(window)
+    titleBar = TitleBar(window)
+
+    # Transition to dark theme
+    titleBar._handleThemeChanged(True)
+    assert titleBar.getTitle().palette().color(QPalette.ColorRole.WindowText).name() == "#ffffff"
+    assert titleBar.getTitle().styleSheet() == ""
+    assert titleBar.getIcon().styleSheet() == ""
+    for button in titleBar.getButtons().values():
+        assert button.getGlyphColor().name() == "#ffffff"
+
+    # Revert to light theme
+    titleBar._handleThemeChanged(False)
+    assert titleBar.getTitle().palette().color(QPalette.ColorRole.WindowText).name() == "#000000"
+    assert titleBar.getTitle().styleSheet() == ""
+    assert titleBar.getIcon().styleSheet() == ""
+    for button in titleBar.getButtons().values():
+        assert button.getGlyphColor().name() == "#333333"
+
+
+def test_titlebar_observes_parent_dark_theme_changed_signal(qtbot):
+    """Verify TitleBar automatically subscribes to parent darkThemeChanged signal.
+
+    Parameters
+    ----------
+    qtbot : pytestqt.qtbot.QtBot
+        Pytest-qt fixture for widget lifecycle management.
+    """
+
+    class MockThemedWindow(QWidget):
+        darkThemeChanged = Signal(bool)
+
+    window = MockThemedWindow()
+    qtbot.addWidget(window)
+    titleBar = TitleBar(window)
+
+    # Emitting darkThemeChanged on parent updates TitleBar
+    window.darkThemeChanged.emit(True)
+    assert titleBar.getTitle().palette().color(QPalette.ColorRole.WindowText).name() == "#ffffff"
+    for button in titleBar.getButtons().values():
+        assert button.getGlyphColor().name() == "#ffffff"
+
+    window.darkThemeChanged.emit(False)
+    assert titleBar.getTitle().palette().color(QPalette.ColorRole.WindowText).name() == "#000000"
+    for button in titleBar.getButtons().values():
+        assert button.getGlyphColor().name() == "#333333"
+
+
+def test_frameless_window_set_dark_theme_updates_titlebar(qtbot):
+    """Verify calling setDarkTheme on FramelessMainWindow dynamically updates title bar.
+
+    Parameters
+    ----------
+    qtbot : pytestqt.qtbot.QtBot
+        Pytest-qt fixture for widget lifecycle management.
+    """
+    from qtframeless import FramelessMainWindow
+
+    window = FramelessMainWindow()
+    qtbot.addWidget(window)
+    titleBar = window.getTitleBar()
+    assert titleBar is not None
+
+    # Manually activate dark theme on window
+    window.setDarkTheme(True)
+    assert window.isDarkTheme()
+    assert titleBar.isDarkTheme()
+    assert titleBar.getTitle().palette().color(QPalette.ColorRole.WindowText).name() == "#ffffff"
+    for button in titleBar.getButtons().values():
+        assert button.getGlyphColor().name() == "#ffffff"
+
+    # Manually activate light theme on window
+    window.setDarkTheme(False)
+    assert not window.isDarkTheme()
+    assert not titleBar.isDarkTheme()
+    assert titleBar.getTitle().palette().color(QPalette.ColorRole.WindowText).name() == "#000000"
+    for button in titleBar.getButtons().values():
+        assert button.getGlyphColor().name() == "#333333"
+
+
+def test_titlebar_update_dpi_scaling_buttons(qtbot):
+    """Verify updateDpiScaling scales vector control button dimensions proportionally.
+
+    Parameters
+    ----------
+    qtbot : pytestqt.qtbot.QtBot
+        Pytest-qt fixture for widget lifecycle management.
+    """
+    window = QWidget()
+    qtbot.addWidget(window)
+    titleBar = TitleBar(window)
+
+    # Scale to 144 DPI (1.5x)
+    titleBar.updateDpiScaling(144)
+    buttons = titleBar.getButtons()
+    for button in buttons.values():
+        assert button.height() == 45
+        assert button.width() == 63
+
+    # Scale to 192 DPI (2.0x)
+    titleBar.updateDpiScaling(192)
+    for button in buttons.values():
+        assert button.height() == 60
+        assert button.width() == 84
+
+
+def test_titlebar_update_dpi_scaling_icon_pixmap(qtbot):
+    """Verify updateDpiScaling re-renders window icon pixmap at scaled dimensions.
+
+    Parameters
+    ----------
+    qtbot : pytestqt.qtbot.QtBot
+        Pytest-qt fixture for widget lifecycle management.
+    """
+    from qtpy.QtGui import QColor, QIcon, QPixmap
+
+    window = QWidget()
+    qtbot.addWidget(window)
+    titleBar = TitleBar(window)
+
+    pixmap = QPixmap(64, 64)
+    pixmap.fill(QColor("blue"))
+    titleBar.setIcon(QIcon(pixmap))
+
+    # Base size at 96 DPI is 18x18
+    assert titleBar.getIcon().pixmap().width() == 18
+    assert titleBar.getIcon().pixmap().height() == 18
+
+    # Scale to 144 DPI (1.5x) -> 27x27
+    titleBar.updateDpiScaling(144)
+    assert titleBar.getIcon().pixmap().width() == 27
+    assert titleBar.getIcon().pixmap().height() == 27
+
+    # Scale to 192 DPI (2.0x) -> 36x36
+    titleBar.updateDpiScaling(192)
+    assert titleBar.getIcon().pixmap().width() == 36
+    assert titleBar.getIcon().pixmap().height() == 36
+
+
+def test_titlebar_update_dpi_scaling_margins_and_size_hint(qtbot):
+    """Verify updateDpiScaling recomputes layout and label contentsMargins.
+
+    Parameters
+    ----------
+    qtbot : pytestqt.qtbot.QtBot
+        Pytest-qt fixture for widget lifecycle management.
+    """
+    window = QWidget()
+    qtbot.addWidget(window)
+    titleBar = TitleBar(window)
+
+    layout = titleBar.layout()
+    assert layout is not None
+    assert layout.contentsMargins().left() == 8
+
+    titleBar.updateDpiScaling(144)
+    assert layout.contentsMargins().left() == 12
+    margins = titleBar.getTitle().contentsMargins()
+    assert margins.left() == 6
+    assert margins.top() == 6
+    assert margins.right() == 6
+    assert margins.bottom() == 6
+
+    iconMargins = titleBar.getIcon().contentsMargins()
+    assert iconMargins.left() == 6
+    assert iconMargins.top() == 6
+    assert iconMargins.right() == 6
+    assert iconMargins.bottom() == 6
+
+    assert titleBar.getTitle().styleSheet() == ""
+    assert titleBar.getIcon().styleSheet() == ""
+    assert titleBar.maximumHeight() == titleBar.sizeHint().height()
+
+
+def test_vector_button_glyph_scaling_factor(qtbot):
+    """Verify VectorButton glyph scaling factor scales with button height.
+
+    Parameters
+    ----------
+    qtbot : pytestqt.qtbot.QtBot
+        Pytest-qt fixture for widget lifecycle management.
+    """
+    button = VectorButton()
+    qtbot.addWidget(button)
+
+    # Standard height 30px -> scale factor 1.0
+    assert button.getGlyphScaleFactor() == 1.0
+
+    # High DPI (150% -> height 45px, raw ratio 1.5 -> dampened: 1.0 + 0.5 * 0.25 = 1.125)
+    button.updateButtonHeight(45)
+    assert button.getGlyphScaleFactor() == 1.125
+
+    # 200% scaling (height 60px, raw ratio 2.0 -> dampened: 1.0 + 1.0 * 0.25 = 1.25)
+    button.updateButtonHeight(60)
+    assert button.getGlyphScaleFactor() == 1.25
+
+
+def test_titlebar_title_font_dpi_scaling(qtbot):
+    """Verify TitleBar title label font scales with DPI updates.
+
+    Parameters
+    ----------
+    qtbot : pytestqt.qtbot.QtBot
+        Pytest-qt fixture for widget lifecycle management.
+    """
+    window = QWidget()
+    qtbot.addWidget(window)
+    titleBar = TitleBar(window)
+
+    customFont = QFont("Segoe UI", 10)
+    titleBar.setTitleBarFont(customFont)
+    initialPointSize = titleBar.getTitle().font().pointSizeF()
+    assert initialPointSize == 10.0
+
+    # 150% DPI scaling -> 10pt * 1.5 = 15pt
+    titleBar.updateDpiScaling(144)
+    assert titleBar.getTitle().font().pointSizeF() == 15.0
+
+    # 200% DPI scaling -> 10pt * 2.0 = 20pt
+    titleBar.updateDpiScaling(192)
+    assert titleBar.getTitle().font().pointSizeF() == 20.0
+
+
+def test_buttons_module_direct_imports() -> None:
+    """Verify all vector button classes are directly importable from buttons module."""
+    import qtframeless.windows.buttons as buttonsModule
+    import qtframeless.windows.title_bar as titleBarModule
+
+    assert buttonsModule.VectorButton is titleBarModule.VectorButton
+    assert buttonsModule.MinimizeButton is titleBarModule.MinimizeButton
+    assert buttonsModule.MaximizeButton is titleBarModule.MaximizeButton
+    assert buttonsModule.CloseButton is titleBarModule.CloseButton
+    assert buttonsModule.FullScreenButton is titleBarModule.FullScreenButton
+
+
+

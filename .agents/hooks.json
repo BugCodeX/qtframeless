@@ -1,0 +1,11 @@
+{
+  "sdd-grill-gate": {
+    "PreInvocation": [
+      {
+        "type": "command",
+        "command": "python hooks/sdd_grill_gate.py",
+        "timeout": 5
+      }
+    ]
+  }
+}

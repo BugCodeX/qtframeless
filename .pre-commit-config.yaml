@@ -1,0 +1,50 @@
+repos:
+  # 1. Standard file hygiene checks
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-toml
+      - id: check-added-large-files
+        args: ["--maxkb=2048"]
+      - id: check-merge-conflict
+
+  # 2. Ruff: Fast linter & formatter (inheriting rules from root pyproject.toml)
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.9.9
+    hooks:
+      - id: ruff
+        args: ["--fix"]
+      - id: ruff-format
+
+  # 3. Pyright: Static type checking using the workspace environment
+  - repo: local
+    hooks:
+      - id: pyright
+        name: pyright
+        entry: uv run pyright
+        language: system
+        types: [python]
+        pass_filenames: false
+
+  # 4. Conventional Commits validation enforcing commit-hygiene skill
+  - repo: https://github.com/compilerla/conventional-pre-commit
+    rev: v4.0.0
+    hooks:
+      - id: conventional-pre-commit
+        stages: [commit-msg]
+        args: [
+          "feat",
+          "fix",
+          "docs",
+          "chore",
+          "refactor",
+          "test",
+          "ci",
+          "style",
+          "perf",
+          "build",
+          "revert",
+        ]
