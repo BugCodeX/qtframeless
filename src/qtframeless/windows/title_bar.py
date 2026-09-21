@@ -745,15 +745,21 @@ class TitleBar(QWidget):
         if not self._autoStyleMenuBar or self._menuBar is None:
             return
 
-        if self._isDarkTheme:
-            styleSheet = """
-QMenuBar {
+        scaleFactor = getattr(self, "_currentDpi", 96) / 96.0
+        scaledMarginLeft = max(4, round(8 * scaleFactor))
+
+        menuBarRule = f"""\
+QMenuBar {{
     background: transparent;
     border: none;
+    margin-left: {scaledMarginLeft}px;
     font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
     font-size: 13px;
-}
-QMenuBar::item {
+}}
+"""
+
+        if self._isDarkTheme:
+            styleSheet = menuBarRule + """QMenuBar::item {
     background: transparent;
     color: #ffffff;
     padding: 5px 10px;
@@ -781,7 +787,7 @@ QMenu::item {
     border-radius: 4px;
 }
 QMenu::item:selected {
-    background-color: rgba(255, 255, 255, 0.1);
+    background-color: #0078d4;
     color: #ffffff;
 }
 QMenu::item:disabled {
@@ -794,14 +800,7 @@ QMenu::separator {
 }
 """
         else:
-            styleSheet = """
-QMenuBar {
-    background: transparent;
-    border: none;
-    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-    font-size: 13px;
-}
-QMenuBar::item {
+            styleSheet = menuBarRule + """QMenuBar::item {
     background: transparent;
     color: #000000;
     padding: 5px 10px;
