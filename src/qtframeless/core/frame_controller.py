@@ -4,7 +4,6 @@ Encapsulates non-client calculations, border resize hit testing, non-client mous
 DPI changes, and native window drag delegation.
 """
 
-import sys
 from ctypes import byref, cast, sizeof, windll
 from ctypes.wintypes import LPRECT, MSG
 from typing import TYPE_CHECKING
@@ -36,51 +35,6 @@ if TYPE_CHECKING:
     from qtframeless.windows.title_bar import TitleBar
 
 __all__ = ["WindowFrameController"]
-
-
-def _getCursorPos() -> QPoint:
-    """Return cursor position dynamically resolving monkeypatched QCursor if present."""
-    mixinMod = sys.modules.get("qtframeless.core.frameless_mixin")
-    cursorCls = getattr(mixinMod, "QCursor", QCursor) if mixinMod else QCursor
-    return cursorCls.pos()
-
-
-def _getDpiForWindow(hWnd: int) -> int:
-    """Return window DPI dynamically resolving monkeypatched getDpiForWindow if present."""
-    mixinMod = sys.modules.get("qtframeless.core.frameless_mixin")
-    fn = getattr(mixinMod, "getDpiForWindow", getDpiForWindow) if mixinMod else getDpiForWindow
-    return fn(hWnd)
-
-
-def _isMaximized(hWnd: int) -> bool:
-    """Return maximize status dynamically resolving monkeypatched isMaximized if present."""
-    mixinMod = sys.modules.get("qtframeless.core.frameless_mixin")
-    fn = getattr(mixinMod, "isMaximized", isMaximized) if mixinMod else isMaximized
-    return fn(hWnd)
-
-
-def _isFullScreen(hWnd: int) -> bool:
-    """Return fullscreen status dynamically resolving monkeypatched isFullScreen if present."""
-    mixinMod = sys.modules.get("qtframeless.core.frameless_mixin")
-    fn = getattr(mixinMod, "isFullScreen", isFullScreen) if mixinMod else isFullScreen
-    return fn(hWnd)
-
-
-def _getTaskbar() -> type[Taskbar]:
-    """Return Taskbar class dynamically resolving monkeypatched Taskbar if present."""
-    mixinMod = sys.modules.get("qtframeless.core.frameless_mixin")
-    return getattr(mixinMod, "Taskbar", Taskbar) if mixinMod else Taskbar
-
-
-def _getResizeBorderThickness(hWnd: int) -> int:
-    """Return resize border thickness dynamically resolving monkeypatched helper."""
-    mixinMod = sys.modules.get("qtframeless.core.frameless_mixin")
-    fn = (
-        getattr(mixinMod, "getResizeBorderThickness", getResizeBorderThickness)
-        if mixinMod
-        else getResizeBorderThickness
-    )
-    return fn(hWnd)
 
 
 class WindowFrameController:
@@ -278,12 +232,12 @@ class WindowFrameController:
         """
         if self._resizable:
             if not self._window.isMaximized():
-                cursorPosition = _getCursorPos()
+                cursorPosition = QCursor.pos()
                 x = cursorPosition.x() - self._window.x()
                 y = cursorPosition.y() - self._window.y()
                 width, height = self._window.width(), self._window.height()
 
-                dpi = _getDpiForWindow(msg.hWnd)
+                dpi = getDpiForWindow(msg.hWnd)
                 scaledBorderWidth = round(self._borderWidth * dpi / 96)
 
                 left = x < scaledBorderWidth
@@ -316,7 +270,7 @@ class WindowFrameController:
                         typeCast(QWidget, self._window), QPoint(0, 0)
                     )
                     buttonRect = QRect(buttonPosition, maximizeButton.size())
-                    cursorPosition = _getCursorPos()
+                    cursorPosition = QCursor.pos()
                     windowPoint = self._window.mapFromGlobal(cursorPosition)
                     if buttonRect.contains(windowPoint):
                         return True, win32con.HTMAXBUTTON
@@ -446,27 +400,26 @@ class WindowFrameController:
         else:
             rect = cast(msg.lParam, LPRECT).contents
 
-        maximized = _isMaximized(msg.hWnd)
-        fullScreen = _isFullScreen(msg.hWnd)
+        maximized = isMaximized(msg.hWnd)
+        fullScreen = isFullScreen(msg.hWnd)
 
         if maximized and not fullScreen:
-            thickness = _getResizeBorderThickness(msg.hWnd)
+            thickness = getResizeBorderThickness(msg.hWnd)
             rect.top += thickness
             rect.left += thickness
             rect.right -= thickness
             rect.bottom -= thickness
 
-        taskbarCls = _getTaskbar()
-        if (maximized or fullScreen) and taskbarCls.isAutoHide():
-            position = taskbarCls.getPosition(msg.hWnd)
-            if position == taskbarCls.TOP:
-                rect.top += taskbarCls.AUTO_HIDE_THICKNESS
-            elif position == taskbarCls.BOTTOM:
-                rect.bottom -= taskbarCls.AUTO_HIDE_THICKNESS
-            elif position == taskbarCls.LEFT:
-                rect.left += taskbarCls.AUTO_HIDE_THICKNESS
-            elif position == taskbarCls.RIGHT:
-                rect.right -= taskbarCls.AUTO_HIDE_THICKNESS
+        if (maximized or fullScreen) and Taskbar.isAutoHide():
+            position = Taskbar.getPosition(msg.hWnd)
+            if position == Taskbar.TOP:
+                rect.top += Taskbar.AUTO_HIDE_THICKNESS
+            elif position == Taskbar.BOTTOM:
+                rect.bottom -= Taskbar.AUTO_HIDE_THICKNESS
+            elif position == Taskbar.LEFT:
+                rect.left += Taskbar.AUTO_HIDE_THICKNESS
+            elif position == Taskbar.RIGHT:
+                rect.right -= Taskbar.AUTO_HIDE_THICKNESS
 
         result = 0 if not msg.wParam else win32con.WVR_REDRAW
         return True, result
@@ -530,7 +483,7 @@ class WindowFrameController:
             if titleBar is not None:
                 newDpi = msg.wParam & 0xFFFF
                 if newDpi <= 0:
-                    newDpi = _getDpiForWindow(msg.hWnd)
+                    newDpi = getDpiForWindow(msg.hWnd)
                 titleBar.updateDpiScaling(newDpi)
         win32gui.SetWindowPos(
             msg.hWnd,

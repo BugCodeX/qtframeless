@@ -4,8 +4,6 @@ Encapsulates OS theme detection, dark mode toggling, title bar synchronization,
 and QPalette generation for standard opaque and material transparent windows.
 """
 
-import sys
-import winreg
 from winreg import HKEY_CURRENT_USER, KEY_READ, OpenKey, QueryValueEx
 
 from qtpy.QtCore import QObject, Qt, Signal
@@ -123,24 +121,13 @@ class ThemeController(QObject):
             or None on OSError or invalid registry value.
         """
         try:
-            openKeyFn = OpenKey
-            queryValueExFn = QueryValueEx
-
-            mixinModule = sys.modules.get("qtframeless.core.frameless_mixin")
-            if mixinModule is not None and "OpenKey" in mixinModule.__dict__:
-                if mixinModule.__dict__["OpenKey"] is not winreg.OpenKey:
-                    openKeyFn = mixinModule.__dict__["OpenKey"]
-            if mixinModule is not None and "QueryValueEx" in mixinModule.__dict__:
-                if mixinModule.__dict__["QueryValueEx"] is not winreg.QueryValueEx:
-                    queryValueExFn = mixinModule.__dict__["QueryValueEx"]
-
-            rootKey = openKeyFn(
+            rootKey = OpenKey(
                 HKEY_CURRENT_USER,
                 r"Software\Microsoft\Windows\CurrentVersion\Themes\Personalize",
                 0,
                 KEY_READ,
             )
-            lightThemeValue, _ = queryValueExFn(rootKey, "AppsUseLightTheme")
+            lightThemeValue, _ = QueryValueEx(rootKey, "AppsUseLightTheme")
             if lightThemeValue == 0:
                 return True
             if lightThemeValue == 1:

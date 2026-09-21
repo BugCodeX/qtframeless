@@ -42,7 +42,7 @@ def test_frameless_mixin_nc_hit_test_scaled_dpi(qtbot, monkeypatch):
 
     # 192 DPI (2.0x scale -> scaled border width = round(5 * 192 / 96) = 10 px)
     monkeypatch.setattr(
-        "qtframeless.core.frameless_mixin.getDpiForWindow",
+        "qtframeless.core.frame_controller.getDpiForWindow",
         lambda hWnd: 192,
     )
 
@@ -54,7 +54,7 @@ def test_frameless_mixin_nc_hit_test_scaled_dpi(qtbot, monkeypatch):
     # Relative x = 7 is inside 10px scaled left border
     scaledLeftPoint = QPoint(107, 200)
     monkeypatch.setattr(
-        "qtframeless.core.frameless_mixin.QCursor.pos",
+        "qtframeless.core.frame_controller.QCursor.pos",
         staticmethod(lambda: scaledLeftPoint),
     )
     eventHandled, hitCode = widget.nativeEvent(QByteArray(b"windows_generic_MSG"), messagePointer)
@@ -64,7 +64,7 @@ def test_frameless_mixin_nc_hit_test_scaled_dpi(qtbot, monkeypatch):
     # Relative x = 12 is outside 10px border, falls through to client area
     clientPoint = QPoint(112, 200)
     monkeypatch.setattr(
-        "qtframeless.core.frameless_mixin.QCursor.pos",
+        "qtframeless.core.frame_controller.QCursor.pos",
         staticmethod(lambda: clientPoint),
     )
     eventHandled, _ = widget.nativeEvent(QByteArray(b"windows_generic_MSG"), messagePointer)

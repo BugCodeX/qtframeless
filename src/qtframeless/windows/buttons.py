@@ -4,11 +4,8 @@ Provides vector-drawn minimize, maximize/restore, close, and fullscreen toggle b
 using QPainter, supporting dark/light theme switching, DPI scaling, and custom hover/pressed colors.
 """
 
-import sys
-
 from qtpy.QtCore import QEvent, QPointF, QRectF, Qt, QVariantAnimation
-from qtpy.QtGui import QColor, QMouseEvent, QPaintEvent, QPen
-from qtpy.QtGui import QPainter as _QtQPainter
+from qtpy.QtGui import QColor, QMouseEvent, QPainter, QPaintEvent, QPen
 from qtpy.QtWidgets import QPushButton, QWidget
 
 __all__ = [
@@ -18,20 +15,6 @@ __all__ = [
     "MinimizeButton",
     "VectorButton",
 ]
-
-
-def _getPainterClass() -> type:
-    """Return active QPainter class, respecting title_bar module monkeypatching.
-
-    Returns
-    -------
-    type
-        The QPainter class or monkeypatched mock.
-    """
-    titleBarModule = sys.modules.get("qtframeless.windows.title_bar")
-    if titleBarModule is not None and hasattr(titleBarModule, "QPainter"):
-        return titleBarModule.QPainter
-    return _QtQPainter
 
 
 class VectorButton(QPushButton):
@@ -374,7 +357,7 @@ class VectorButton(QPushButton):
             The paint event.
         """
         if self._currentBackgroundColor.alpha() > 0:
-            painter = _getPainterClass()(self)
+            painter = QPainter(self)
             painter.fillRect(self.rect(), self._currentBackgroundColor)
             painter.end()
 
@@ -391,9 +374,8 @@ class MinimizeButton(VectorButton):
             The paint event.
         """
         super().paintEvent(event)
-        painterClass = _getPainterClass()
-        painter = painterClass(self)
-        painter.setRenderHint(painterClass.RenderHint.Antialiasing)
+        painter = QPainter(self)
+        painter.setRenderHint(QPainter.RenderHint.Antialiasing)
 
         scaleFactor = self.getGlyphScaleFactor()
         strokeColor = self._hoverGlyphColor if self.isHovered() else self._glyphColor
@@ -448,9 +430,8 @@ class MaximizeButton(VectorButton):
             The paint event.
         """
         super().paintEvent(event)
-        painterClass = _getPainterClass()
-        painter = painterClass(self)
-        painter.setRenderHint(painterClass.RenderHint.Antialiasing)
+        painter = QPainter(self)
+        painter.setRenderHint(QPainter.RenderHint.Antialiasing)
 
         isHovered = self.isHovered()
 
@@ -530,9 +511,8 @@ class CloseButton(VectorButton):
             The paint event.
         """
         super().paintEvent(event)
-        painterClass = _getPainterClass()
-        painter = painterClass(self)
-        painter.setRenderHint(painterClass.RenderHint.Antialiasing)
+        painter = QPainter(self)
+        painter.setRenderHint(QPainter.RenderHint.Antialiasing)
 
         # White glyph on hover/pressed red background, normal color otherwise
         isHighlighted = self.isHovered() or self.isPressedState()
@@ -568,9 +548,8 @@ class FullScreenButton(VectorButton):
             The paint event.
         """
         super().paintEvent(event)
-        painterClass = _getPainterClass()
-        painter = painterClass(self)
-        painter.setRenderHint(painterClass.RenderHint.Antialiasing)
+        painter = QPainter(self)
+        painter.setRenderHint(QPainter.RenderHint.Antialiasing)
 
         scaleFactor = self.getGlyphScaleFactor()
         strokeColor = self._hoverGlyphColor if self.isHovered() else self._glyphColor

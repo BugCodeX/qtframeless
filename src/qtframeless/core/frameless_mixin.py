@@ -4,37 +4,22 @@ Encapsulates non-client calculations, border resize hit testing, theme detection
 and drag-to-move delegation without duplicating code across concrete Qt window types.
 """
 
-from ctypes import byref, cast, sizeof, windll  # noqa: F401
-from ctypes.wintypes import LPRECT, MSG  # noqa: F401
 from enum import IntEnum
 from typing import cast as typeCast
 
 import win32con
 import win32gui
-from qtpy.QtCore import Property, QByteArray, QPoint, QRect, Qt, Signal  # noqa: F401
-from qtpy.QtGui import QColor, QCursor, QIcon, QMouseEvent, QPalette  # noqa: F401
+from qtpy.QtCore import Property, QByteArray, Qt, Signal
+from qtpy.QtGui import QColor, QIcon, QMouseEvent, QPalette
 from qtpy.QtWidgets import QWidget
 
 from qtframeless.core.frame_controller import WindowFrameController
 from qtframeless.core.theme import ThemeController
-from qtframeless.native.win32_types import (  # noqa: F401
-    LPNCCALCSIZE_PARAMS,
-    TME_LEAVE,
-    TME_NONCLIENT,
-    TRACKMOUSEEVENT,
-    WM_DPICHANGED,
-    WM_NCMOUSELEAVE,
-    WindowCornerPreference,
-)
-from qtframeless.native.win32_utils import (  # noqa: F401
-    Taskbar,
-    getDpiForWindow,
-    getResizeBorderThickness,
-    isFullScreen,
-    isMaximized,
-)
+from qtframeless.native.win32_types import WindowCornerPreference
 from qtframeless.native.window_effect import WindowsEffectHelper
 from qtframeless.windows.title_bar import TitleBar
+
+__all__ = ["FramelessWindowMixin"]
 
 
 class FramelessWindowMixin:
@@ -693,12 +678,3 @@ class FramelessWindowMixin:
         notify=captionColorChanged,
         doc="Native window caption color.",
     )
-
-
-def __getattr__(name: str) -> object:
-    """Provide backwards-compatible module attributes for winreg constants and functions."""
-    if name in ("HKEY_CURRENT_USER", "KEY_READ", "OpenKey", "QueryValueEx"):
-        import qtframeless.core.theme as themeModule
-
-        return getattr(themeModule, name)
-    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")

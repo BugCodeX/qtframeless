@@ -223,7 +223,7 @@ def test_maximize_button_vector_painting_normal_and_restore(qtbot, monkeypatch):
     mockClassNormal = MagicMock(return_value=mockPainterNormal)
     mockClassNormal.RenderHint = QPainter.RenderHint
     monkeypatch.setattr(
-        "qtframeless.windows.title_bar.QPainter",
+        "qtframeless.windows.buttons.QPainter",
         mockClassNormal,
     )
     maxButton.paintEvent(QPaintEvent(maxButton.rect()))
@@ -242,7 +242,7 @@ def test_maximize_button_vector_painting_normal_and_restore(qtbot, monkeypatch):
     mockClassMaximized = MagicMock(return_value=mockPainterMaximized)
     mockClassMaximized.RenderHint = QPainter.RenderHint
     monkeypatch.setattr(
-        "qtframeless.windows.title_bar.QPainter",
+        "qtframeless.windows.buttons.QPainter",
         mockClassMaximized,
     )
     maxButton.paintEvent(QPaintEvent(maxButton.rect()))
@@ -337,7 +337,7 @@ def test_vector_button_hover_and_pressed_styling_and_painting(qtbot, monkeypatch
     mockClassMin = MagicMock(return_value=mockPainterMinNormal)
     mockClassMin.RenderHint = QPainter.RenderHint
     monkeypatch.setattr(
-        "qtframeless.windows.title_bar.QPainter",
+        "qtframeless.windows.buttons.QPainter",
         mockClassMin,
     )
     monkeypatch.setattr(minButton, "underMouse", lambda: False)
@@ -357,7 +357,7 @@ def test_vector_button_hover_and_pressed_styling_and_painting(qtbot, monkeypatch
     mockClassClose = MagicMock(return_value=mockPainterCloseNormal)
     mockClassClose.RenderHint = QPainter.RenderHint
     monkeypatch.setattr(
-        "qtframeless.windows.title_bar.QPainter",
+        "qtframeless.windows.buttons.QPainter",
         mockClassClose,
     )
     monkeypatch.setattr(closeButton, "underMouse", lambda: False)
