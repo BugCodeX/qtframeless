@@ -17,6 +17,7 @@ from qtpy.QtGui import (
 from qtpy.QtWidgets import (
     QHBoxLayout,
     QLabel,
+    QMenuBar,
     QPushButton,
     QSizePolicy,
     QWidget,
@@ -69,6 +70,9 @@ class TitleBar(QWidget):
         self._baseIconHeight = 18
         self._baseButtonHeight = 30
         self._backgroundColor: QColor | None = None
+        self._menuBar: QMenuBar | None = None
+        self._titleAlignment: Qt.AlignmentFlag = Qt.AlignmentFlag.AlignLeft
+        self._autoStyleMenuBar: bool = True
 
         self._iconLabel = QLabel()
         self._titleLabel = QLabel()
@@ -153,6 +157,7 @@ class TitleBar(QWidget):
         self.setTitleBarHint(hint)
         mainLayout.addWidget(self._cornerWidget)
         self.setLayout(mainLayout)
+        self._updateTitleAlignment()
 
     def _handleMinimizeClicked(self) -> None:
         """Minimize the top-level parent window."""
@@ -204,6 +209,8 @@ class TitleBar(QWidget):
             if isinstance(button, VectorButton):
                 button.setDarkTheme(isDark)
 
+        self._updateMenuBarStyle()
+
     def setDarkTheme(self, isDark: bool) -> None:
         """Configure dark or light theme styling on labels and vector buttons.
 
@@ -237,7 +244,7 @@ class TitleBar(QWidget):
                 event.position().toPoint() if hasattr(event, "position") else event.pos()
             )
             targetChild = self.childAt(clickPosition)
-            isInteractiveChild = (
+            isCenterInteractive = (
                 self._centerWidget is not None
                 and targetChild is not None
                 and (
@@ -245,6 +252,20 @@ class TitleBar(QWidget):
                     or self._centerWidget.isAncestorOf(targetChild)
                 )
             )
+            isMenuBarInteractive = (
+                self._menuBar is not None
+                and (
+                    (
+                        targetChild is not None
+                        and (
+                            targetChild is self._menuBar
+                            or self._menuBar.isAncestorOf(targetChild)
+                        )
+                    )
+                    or self._menuBar.geometry().contains(clickPosition)
+                )
+            )
+            isInteractiveChild = isCenterInteractive or isMenuBarInteractive
             if not isInteractiveChild:
                 self._handleMaximizeClicked()
                 event.accept()
@@ -264,12 +285,28 @@ class TitleBar(QWidget):
                 event.position().toPoint() if hasattr(event, "position") else event.pos()
             )
             targetChild = self.childAt(clickPosition)
-            isDraggableWidget = targetChild in (
-                None,
-                self._titleLabel,
-                self._iconLabel,
-                self._centerContainer,
-                self._cornerWidget,
+            isMenuBarClick = (
+                self._menuBar is not None
+                and (
+                    (
+                        targetChild is not None
+                        and (
+                            targetChild is self._menuBar
+                            or self._menuBar.isAncestorOf(targetChild)
+                        )
+                    )
+                    or self._menuBar.geometry().contains(clickPosition)
+                )
+            )
+            isDraggableWidget = (
+                not isMenuBarClick
+                and targetChild in (
+                    None,
+                    self._titleLabel,
+                    self._iconLabel,
+                    self._centerContainer,
+                    self._cornerWidget,
+                )
             )
             if isDraggableWidget:
                 targetWindow = self.window()
@@ -544,6 +581,9 @@ class TitleBar(QWidget):
             self.removeCenterWidget()
 
         if widget is not None:
+            self._centerContainer.setSizePolicy(
+                QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Preferred
+            )
             widget.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Preferred)
             containerLayout = self._centerContainer.layout()
             if containerLayout is not None:
@@ -575,8 +615,225 @@ class TitleBar(QWidget):
                 containerLayout.removeWidget(detachedWidget)
             detachedWidget.setParent(None)
             self._centerWidget = None
+            self._updateTitleAlignment()
             return detachedWidget
         return None
+
+    def setMenuBar(self, menuBar: QMenuBar | None) -> None:
+        """Install or replace the QMenuBar inside the title bar right after the icon.
+
+        Parameters
+        ----------
+        menuBar : QMenuBar or None
+            Menu bar instance to install, or None to remove the existing one.
+        """
+        if self._menuBar is not None:
+            self.removeMenuBar()
+
+        if menuBar is None:
+            return
+
+        self._menuBar = menuBar
+        menuBar.setSizePolicy(QSizePolicy.Policy.Maximum, QSizePolicy.Policy.Preferred)
+
+        layout = self.layout()
+        if layout is not None:
+            iconIndex = layout.indexOf(self._iconLabel)
+            insertIndex = iconIndex + 1 if iconIndex >= 0 else 0
+            layout.insertWidget(insertIndex, menuBar)
+
+        self._updateMenuBarStyle()
+
+    def getMenuBar(self) -> QMenuBar | None:
+        """Return the installed QMenuBar widget.
+
+        Returns
+        -------
+        QMenuBar or None
+            The installed menu bar widget, or None if omitted.
+        """
+        return self._menuBar
+
+    def removeMenuBar(self) -> QMenuBar | None:
+        """Detach from layout, reparent to None, and return the menu bar.
+
+        Returns
+        -------
+        QMenuBar or None
+            The detached menu bar widget, or None if no menu bar was installed.
+        """
+        if self._menuBar is not None:
+            detachedMenuBar = self._menuBar
+            layout = self.layout()
+            if layout is not None:
+                layout.removeWidget(detachedMenuBar)
+            detachedMenuBar.setParent(None)
+            self._menuBar = None
+            return detachedMenuBar
+        return None
+
+    def setTitleAlignment(self, alignment: Qt.AlignmentFlag) -> None:
+        """Set the horizontal alignment of the window title.
+
+        Parameters
+        ----------
+        alignment : Qt.AlignmentFlag
+            Target alignment flag (e.g. Qt.AlignmentFlag.AlignCenter or Qt.AlignmentFlag.AlignLeft).
+        """
+        self._titleAlignment = alignment
+        self._updateTitleAlignment()
+
+    def getTitleAlignment(self) -> Qt.AlignmentFlag:
+        """Return the current horizontal alignment flag of the window title.
+
+        Returns
+        -------
+        Qt.AlignmentFlag
+            Active title alignment flag.
+        """
+        return self._titleAlignment
+
+    def _updateTitleAlignment(self) -> None:
+        """Update title label alignment and layout size policies matching configured alignment."""
+        if self._titleAlignment in (Qt.AlignmentFlag.AlignCenter, Qt.AlignmentFlag.AlignHCenter):
+            self._titleLabel.setAlignment(
+                Qt.AlignmentFlag.AlignCenter | Qt.AlignmentFlag.AlignVCenter
+            )
+            self._titleLabel.setSizePolicy(
+                QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Preferred
+            )
+            if self._centerWidget is None:
+                self._centerContainer.setSizePolicy(
+                    QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Preferred
+                )
+        else:
+            self._titleLabel.setAlignment(
+                Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignVCenter
+            )
+            self._titleLabel.setSizePolicy(
+                QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Preferred
+            )
+            if self._centerWidget is None:
+                self._centerContainer.setSizePolicy(
+                    QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Preferred
+                )
+
+    def isAutoStyleMenuBar(self) -> bool:
+        """Return whether automatic theme styling is applied to the menu bar.
+
+        Returns
+        -------
+        bool
+            True if auto-styling is enabled, False otherwise.
+        """
+        return self._autoStyleMenuBar
+
+    def setAutoStyleMenuBar(self, autoStyle: bool) -> None:
+        """Configure whether automatic theme styling is applied to the menu bar.
+
+        Parameters
+        ----------
+        autoStyle : bool
+            True to automatically update menu bar styling on theme changes.
+        """
+        self._autoStyleMenuBar = autoStyle
+        if autoStyle and self._menuBar is not None:
+            self._updateMenuBarStyle()
+
+    def _updateMenuBarStyle(self) -> None:
+        """Apply Fluent transparent QMenuBar and QMenu popup styles matching theme."""
+        if not self._autoStyleMenuBar or self._menuBar is None:
+            return
+
+        if self._isDarkTheme:
+            styleSheet = """
+QMenuBar {
+    background: transparent;
+    border: none;
+}
+QMenuBar::item {
+    background: transparent;
+    color: #ffffff;
+    padding: 4px 8px;
+    border-radius: 4px;
+}
+QMenuBar::item:selected {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+QMenuBar::item:pressed {
+    background-color: rgba(255, 255, 255, 0.15);
+}
+QMenu {
+    background-color: #2c2c2c;
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 6px;
+    padding: 4px;
+}
+QMenu::item {
+    background: transparent;
+    color: #ffffff;
+    padding: 5px 24px 5px 20px;
+    border-radius: 4px;
+}
+QMenu::item:selected {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+}
+QMenu::item:disabled {
+    color: rgba(255, 255, 255, 0.4);
+}
+QMenu::separator {
+    height: 1px;
+    background: rgba(255, 255, 255, 0.12);
+    margin: 4px 8px;
+}
+"""
+        else:
+            styleSheet = """
+QMenuBar {
+    background: transparent;
+    border: none;
+}
+QMenuBar::item {
+    background: transparent;
+    color: #000000;
+    padding: 4px 8px;
+    border-radius: 4px;
+}
+QMenuBar::item:selected {
+    background-color: rgba(0, 0, 0, 0.07);
+}
+QMenuBar::item:pressed {
+    background-color: rgba(0, 0, 0, 0.12);
+}
+QMenu {
+    background-color: #f9f9f9;
+    color: #000000;
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    border-radius: 6px;
+    padding: 4px;
+}
+QMenu::item {
+    background: transparent;
+    color: #000000;
+    padding: 5px 24px 5px 20px;
+    border-radius: 4px;
+}
+QMenu::item:selected {
+    background-color: rgba(0, 0, 0, 0.07);
+    color: #000000;
+}
+QMenu::item:disabled {
+    color: rgba(0, 0, 0, 0.35);
+}
+QMenu::separator {
+    height: 1px;
+    background: rgba(0, 0, 0, 0.1);
+    margin: 4px 8px;
+}
+"""
+        self._menuBar.setStyleSheet(styleSheet)
 
     def getBackgroundColor(self) -> QColor | None:
         """Return the current background color of the title bar.

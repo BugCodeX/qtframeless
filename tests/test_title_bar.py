@@ -8,9 +8,10 @@ from unittest.mock import MagicMock
 
 from qtpy.QtCore import QEvent, QPointF, Qt, Signal
 from qtpy.QtGui import QColor, QFont, QMouseEvent, QPalette
-from qtpy.QtWidgets import QLabel, QLineEdit, QSizePolicy, QWidget
+from qtpy.QtWidgets import QLabel, QLineEdit, QMenuBar, QSizePolicy, QWidget
 
 from qtframeless.windows.title_bar import TitleBar, VectorButton
+from qtframeless.windows.window import FramelessMainWindow
 
 
 def test_titlebar_initial_center_widget_is_none(qtbot):
@@ -559,6 +560,327 @@ def test_buttons_module_direct_imports() -> None:
     assert buttonsModule.MaximizeButton is titleBarModule.MaximizeButton
     assert buttonsModule.CloseButton is titleBarModule.CloseButton
     assert buttonsModule.FullScreenButton is titleBarModule.FullScreenButton
+
+
+def test_titlebar_initial_menubar_is_none(qtbot):
+    """Verify that a freshly initialized TitleBar has no menu bar installed.
+
+    Parameters
+    ----------
+    qtbot : pytestqt.qtbot.QtBot
+        Pytest-qt fixture for widget lifecycle management.
+    """
+    window = QWidget()
+    qtbot.addWidget(window)
+    titleBar = TitleBar(window)
+
+    assert titleBar.getMenuBar() is None
+    assert titleBar.getTitleAlignment() == Qt.AlignmentFlag.AlignLeft
+    assert titleBar.isAutoStyleMenuBar() is True
+
+
+def test_titlebar_set_and_get_menubar(qtbot):
+    """Verify setMenuBar installs QMenuBar after icon with Maximum horizontal policy.
+
+    Parameters
+    ----------
+    qtbot : pytestqt.qtbot.QtBot
+        Pytest-qt fixture for widget lifecycle management.
+    """
+    window = QWidget()
+    qtbot.addWidget(window)
+    titleBar = TitleBar(window)
+
+    menuBar = QMenuBar(titleBar)
+    titleBar.setMenuBar(menuBar)
+
+    assert titleBar.getMenuBar() is menuBar
+    assert menuBar.sizePolicy().horizontalPolicy() == QSizePolicy.Policy.Maximum
+    assert menuBar.sizePolicy().verticalPolicy() == QSizePolicy.Policy.Preferred
+
+    layout = titleBar.layout()
+    assert layout is not None
+    iconIndex = layout.indexOf(titleBar.getIcon())
+    menuBarIndex = layout.indexOf(menuBar)
+    assert menuBarIndex == iconIndex + 1
+
+
+def test_titlebar_set_menubar_replaces_existing(qtbot):
+    """Verify setMenuBar replaces the existing menu bar and detaches the previous one.
+
+    Parameters
+    ----------
+    qtbot : pytestqt.qtbot.QtBot
+        Pytest-qt fixture for widget lifecycle management.
+    """
+    window = QWidget()
+    qtbot.addWidget(window)
+    titleBar = TitleBar(window)
+
+    firstMenuBar = QMenuBar(titleBar)
+    secondMenuBar = QMenuBar(titleBar)
+
+    titleBar.setMenuBar(firstMenuBar)
+    assert titleBar.getMenuBar() is firstMenuBar
+
+    titleBar.setMenuBar(secondMenuBar)
+    assert titleBar.getMenuBar() is secondMenuBar
+    assert firstMenuBar.parent() is None
+
+
+def test_titlebar_remove_menubar(qtbot):
+    """Verify removeMenuBar detaches the menu bar, reparents to None, and returns it.
+
+    Parameters
+    ----------
+    qtbot : pytestqt.qtbot.QtBot
+        Pytest-qt fixture for widget lifecycle management.
+    """
+    window = QWidget()
+    qtbot.addWidget(window)
+    titleBar = TitleBar(window)
+
+    menuBar = QMenuBar(titleBar)
+    titleBar.setMenuBar(menuBar)
+
+    removedMenuBar = titleBar.removeMenuBar()
+    assert removedMenuBar is menuBar
+    assert titleBar.getMenuBar() is None
+    assert removedMenuBar.parent() is None
+
+    # Removing again when empty returns None
+    assert titleBar.removeMenuBar() is None
+
+
+def test_titlebar_set_menubar_none_clears(qtbot):
+    """Verify setMenuBar with None detaches and removes the active menu bar.
+
+    Parameters
+    ----------
+    qtbot : pytestqt.qtbot.QtBot
+        Pytest-qt fixture for widget lifecycle management.
+    """
+    window = QWidget()
+    qtbot.addWidget(window)
+    titleBar = TitleBar(window)
+
+    menuBar = QMenuBar(titleBar)
+    titleBar.setMenuBar(menuBar)
+    assert titleBar.getMenuBar() is menuBar
+
+    titleBar.setMenuBar(None)
+    assert titleBar.getMenuBar() is None
+
+
+def test_titlebar_title_alignment(qtbot):
+    """Verify setTitleAlignment toggles horizontal alignment and expanding size policies.
+
+    Parameters
+    ----------
+    qtbot : pytestqt.qtbot.QtBot
+        Pytest-qt fixture for widget lifecycle management.
+    """
+    window = QWidget()
+    qtbot.addWidget(window)
+    titleBar = TitleBar(window)
+
+    # Initial state is AlignLeft with Preferred policy
+    assert titleBar.getTitleAlignment() == Qt.AlignmentFlag.AlignLeft
+    assert bool(titleBar.getTitle().alignment() & Qt.AlignmentFlag.AlignLeft)
+    assert titleBar.getTitle().sizePolicy().horizontalPolicy() == QSizePolicy.Policy.Preferred
+
+    # Switch to AlignCenter
+    titleBar.setTitleAlignment(Qt.AlignmentFlag.AlignCenter)
+    assert titleBar.getTitleAlignment() == Qt.AlignmentFlag.AlignCenter
+    assert bool(titleBar.getTitle().alignment() & Qt.AlignmentFlag.AlignCenter)
+    assert titleBar.getTitle().sizePolicy().horizontalPolicy() == QSizePolicy.Policy.Expanding
+
+    # Switch back to AlignLeft
+    titleBar.setTitleAlignment(Qt.AlignmentFlag.AlignLeft)
+    assert titleBar.getTitleAlignment() == Qt.AlignmentFlag.AlignLeft
+    assert bool(titleBar.getTitle().alignment() & Qt.AlignmentFlag.AlignLeft)
+    assert titleBar.getTitle().sizePolicy().horizontalPolicy() == QSizePolicy.Policy.Preferred
+
+
+def test_titlebar_menubar_autostyle_theme_switching(qtbot):
+    """Verify theme switching applies dark and light Fluent styling to QMenuBar.
+
+    Parameters
+    ----------
+    qtbot : pytestqt.qtbot.QtBot
+        Pytest-qt fixture for widget lifecycle management.
+    """
+    window = QWidget()
+    qtbot.addWidget(window)
+    titleBar = TitleBar(window)
+
+    menuBar = QMenuBar(titleBar)
+    titleBar.setMenuBar(menuBar)
+
+    # Light theme stylesheet checks
+    titleBar.setDarkTheme(False)
+    assert "#000000" in menuBar.styleSheet()
+    assert "#f9f9f9" in menuBar.styleSheet()
+
+    # Dark theme stylesheet checks
+    titleBar.setDarkTheme(True)
+    assert "#ffffff" in menuBar.styleSheet()
+    assert "#2c2c2c" in menuBar.styleSheet()
+
+
+def test_titlebar_menubar_autostyle_disabled(qtbot):
+    """Verify disabling autoStyleMenuBar preserves custom stylesheets across theme changes.
+
+    Parameters
+    ----------
+    qtbot : pytestqt.qtbot.QtBot
+        Pytest-qt fixture for widget lifecycle management.
+    """
+    window = QWidget()
+    qtbot.addWidget(window)
+    titleBar = TitleBar(window)
+
+    menuBar = QMenuBar(titleBar)
+    titleBar.setMenuBar(menuBar)
+
+    titleBar.setAutoStyleMenuBar(False)
+    assert titleBar.isAutoStyleMenuBar() is False
+
+    customStyleSheet = "QMenuBar { background: red; }"
+    menuBar.setStyleSheet(customStyleSheet)
+
+    titleBar.setDarkTheme(True)
+    assert menuBar.styleSheet() == customStyleSheet
+
+    # Re-enabling autoStyleMenuBar immediately reapplies the active theme styles
+    titleBar.setAutoStyleMenuBar(True)
+    assert titleBar.isAutoStyleMenuBar() is True
+    assert "#2c2c2c" in menuBar.styleSheet()
+
+
+def test_mouse_press_on_menubar_bypasses_system_move(qtbot, monkeypatch):
+    """Verify left click on integrated QMenuBar does not initiate window drag.
+
+    Parameters
+    ----------
+    qtbot : pytestqt.qtbot.QtBot
+        Pytest-qt fixture for widget lifecycle management.
+    monkeypatch : pytest.MonkeyPatch
+        Pytest fixture for monkeypatching methods.
+    """
+    window = QWidget()
+    qtbot.addWidget(window)
+    window.resize(700, 400)
+    window.show()
+
+    titleBar = TitleBar(window)
+    titleBar.setTitle("Test Window Title")
+    titleBar.resize(700, 40)
+
+    menuBar = QMenuBar(titleBar)
+    menuBar.addMenu("File")
+    titleBar.setMenuBar(menuBar)
+    titleBar.show()
+    titleBar.layout().activate()
+
+    mockWindowHandle = MagicMock()
+    monkeypatch.setattr(window, "windowHandle", lambda: mockWindowHandle)
+
+    # Click directly on TitleBar at coordinate where menuBar resides
+    menuBarCenter = menuBar.geometry().center()
+    pressEvent = QMouseEvent(
+        QEvent.Type.MouseButtonPress,
+        QPointF(menuBarCenter),
+        QPointF(menuBarCenter),
+        Qt.MouseButton.LeftButton,
+        Qt.MouseButton.LeftButton,
+        Qt.KeyboardModifier.NoModifier,
+    )
+    titleBar.mousePressEvent(pressEvent)
+    assert mockWindowHandle.startSystemMove.call_count == 0
+
+
+def test_mouse_double_click_on_menubar_does_not_maximize(qtbot):
+    """Verify double clicking the integrated QMenuBar does not toggle window maximize.
+
+    Parameters
+    ----------
+    qtbot : pytestqt.qtbot.QtBot
+        Pytest-qt fixture for widget lifecycle management.
+    """
+    window = QWidget()
+    qtbot.addWidget(window)
+    window.resize(700, 400)
+    window.show()
+
+    titleBar = TitleBar(window)
+    titleBar.setTitle("Test Window Title")
+    titleBar.resize(700, 40)
+
+    menuBar = QMenuBar(titleBar)
+    menuBar.addMenu("File")
+    titleBar.setMenuBar(menuBar)
+    titleBar.show()
+    titleBar.layout().activate()
+
+    assert not window.isMaximized()
+
+    # Double click on TitleBar at coordinates of QMenuBar
+    menuBarCenter = menuBar.geometry().center()
+    doubleClickEvent = QMouseEvent(
+        QEvent.Type.MouseButtonDblClick,
+        QPointF(menuBarCenter),
+        QPointF(menuBarCenter),
+        Qt.MouseButton.LeftButton,
+        Qt.MouseButton.LeftButton,
+        Qt.KeyboardModifier.NoModifier,
+    )
+    titleBar.mouseDoubleClickEvent(doubleClickEvent)
+    assert not window.isMaximized()
+
+    # Double click on title label DOES maximize
+    titleLabelCenter = QPointF(titleBar.getTitle().geometry().center())
+    titleDoubleClickEvent = QMouseEvent(
+        QEvent.Type.MouseButtonDblClick,
+        titleLabelCenter,
+        titleLabelCenter,
+        Qt.MouseButton.LeftButton,
+        Qt.MouseButton.LeftButton,
+        Qt.KeyboardModifier.NoModifier,
+    )
+    titleBar.mouseDoubleClickEvent(titleDoubleClickEvent)
+    assert window.isMaximized()
+
+
+def test_frameless_mainwindow_menubar_integration(qtbot):
+    """Verify FramelessMainWindow seamlessly integrates menuBar() and setMenuBar().
+
+    Parameters
+    ----------
+    qtbot : pytestqt.qtbot.QtBot
+        Pytest-qt fixture for widget lifecycle management.
+    """
+    mainWindow = FramelessMainWindow()
+    qtbot.addWidget(mainWindow)
+
+    titleBar = mainWindow.getTitleBar()
+    assert titleBar is not None
+    assert titleBar.getMenuBar() is None
+
+    # menuBar() automatically creates and integrates QMenuBar into TitleBar
+    menuBar = mainWindow.menuBar()
+    assert isinstance(menuBar, QMenuBar)
+    assert titleBar.getMenuBar() is menuBar
+
+    # Repeated calls return the same instance
+    assert mainWindow.menuBar() is menuBar
+
+    # setMenuBar() replaces the active menu bar on TitleBar
+    customMenuBar = QMenuBar()
+    mainWindow.setMenuBar(customMenuBar)
+    assert titleBar.getMenuBar() is customMenuBar
+    assert mainWindow.menuBar() is customMenuBar
+
 
 
 

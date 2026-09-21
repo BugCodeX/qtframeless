@@ -28,6 +28,8 @@ Standard Qt frameless windows (`Qt.WindowType.FramelessWindowHint`) strip away c
 ## Key Features
 
 - **Windows 11 Snap Layouts**: Full native support for the Windows 11 Snap Layout hover menu on the maximize/restore button via non-client `WM_NCHITTEST` and `HTMAXBUTTON` hit testing.
+- **Integrated Title Bar QMenuBar**: Embed standard Qt `QMenuBar` directly inside the custom title bar beside the window icon with native keyboard mnemonics (`Alt` key), transparent background, and dynamic theme updates.
+- **Centered Window Titles**: Configurable title horizontal alignment (`AlignLeft`, `AlignCenter`) to create modern Windows 11 and macOS centered title bar layouts.
 - **Windows 11 Mica & Mica Alt**: Native DWM backdrop materials matching the user's desktop wallpaper and system theme (`DWMSBT_MAINWINDOW` and `DWMSBT_TABBEDWINDOW`).
 - **Windows Fluent Acrylic Blur**: Native blur-behind backdrop material for Windows 10 and 11 with customizable gradient tint color and opacity.
 - **DWM Rounded Corners & Borders**: Configurable native Windows 11 corner rounding preferences (`ROUND`, `ROUND_SMALL`, `DO_NOT_ROUND`) and custom border colors.
@@ -205,6 +207,44 @@ class AcrylicWindow(FramelessAcrylicMainWindow):
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     window = AcrylicWindow()
+    window.show()
+    sys.exit(app.exec())
+```
+
+### 4. Integrated Title Bar MenuBar & Centered Title
+
+Seamlessly embed a `QMenuBar` directly into the title bar alongside a centered window title:
+
+```python
+import sys
+from PySide6.QtCore import Qt
+from PySide6.QtWidgets import QApplication
+from qtframeless import FramelessMainWindow
+
+
+class Window(FramelessMainWindow):
+    def __init__(self) -> None:
+        super().__init__()
+        self.setWindowTitle("Example MainWindow")
+        self.resize(800, 500)
+
+        # 1. Center the title in the title bar
+        self.getTitleBar().setTitleAlignment(Qt.AlignmentFlag.AlignCenter)
+
+        # 2. Add menus directly to the integrated title bar menu bar
+        menuBar = self.menuBar()
+        fileMenu = menuBar.addMenu("File(&F)")
+        fileMenu.addAction("New(&N)")
+        fileMenu.addAction("Open(&O)")
+
+        editMenu = menuBar.addMenu("Edit(&E)")
+        editMenu.addAction("Undo(&U)")
+        editMenu.addAction("Redo(&R)")
+
+
+if __name__ == "__main__":
+    app = QApplication(sys.argv)
+    window = Window()
     window.show()
     sys.exit(app.exec())
 ```

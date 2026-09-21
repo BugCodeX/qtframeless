@@ -6,7 +6,7 @@ Acrylic blur-behind material, and Windows 11 native Mica and Mica Alt materials.
 
 from qtpy.QtCore import QEvent, Qt
 from qtpy.QtGui import QColor, QPalette
-from qtpy.QtWidgets import QVBoxLayout, QWidget
+from qtpy.QtWidgets import QMenuBar, QVBoxLayout, QWidget
 
 from qtframeless.native.win32_types import DWMWA_COLOR_NONE
 from qtframeless.native.win32_utils import isGreaterEqualWin11
@@ -157,6 +157,38 @@ class FramelessMainWindow(BaseMainWindow):
             mainContentWidget = QWidget()
             mainContentWidget.setLayout(mainLayout)
             self.setCentralWidget(mainContentWidget)
+
+    def menuBar(self) -> QMenuBar:
+        """Return the integrated QMenuBar, creating one on the title bar if not present.
+
+        Returns
+        -------
+        QMenuBar
+            The active QMenuBar attached to the custom title bar.
+        """
+        titleBar = self.getTitleBar()
+        if titleBar is not None:
+            existingMenuBar = titleBar.getMenuBar()
+            if existingMenuBar is not None:
+                return existingMenuBar
+            newMenuBar = QMenuBar()
+            titleBar.setMenuBar(newMenuBar)
+            return newMenuBar
+        return super().menuBar()
+
+    def setMenuBar(self, menuBar: QMenuBar) -> None:
+        """Set the QMenuBar on the custom title bar.
+
+        Parameters
+        ----------
+        menuBar : QMenuBar
+            Menu bar instance to attach to the custom title bar.
+        """
+        titleBar = self.getTitleBar()
+        if titleBar is not None:
+            titleBar.setMenuBar(menuBar)
+        else:
+            super().setMenuBar(menuBar)
 
 
 class AcrylicWindowMixin:

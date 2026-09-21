@@ -188,3 +188,49 @@ def test_example_materials_instantiation(qtbot):
     assert acrylicWindow.windowTitle() == "Windows Acrylic Material"
     assert acrylicWindow.getGradientColor() == "F2F2F299"
     assert acrylicWindow.testAttribute(Qt.WidgetAttribute.WA_TranslucentBackground) is False
+
+
+def test_example_menubar_titlebar_instantiation_and_theme(qtbot):
+    """Verify sample_menubar_titlebar pattern instantiates, configures menu bar, and toggles theme.
+
+    Parameters
+    ----------
+    qtbot : pytestqt.qtbot.QtBot
+        Pytest-qt fixture for widget lifecycle management.
+    """
+    from qtpy.QtCore import Qt
+
+    from examples.sample_menubar_titlebar import Window
+
+    window = Window()
+    qtbot.addWidget(window)
+    assert window.windowTitle() == "Example MainWindow"
+
+    titleBar = window.getTitleBar()
+    assert titleBar is not None
+    assert titleBar.getTitleAlignment() == Qt.AlignmentFlag.AlignCenter
+
+    menuBar = titleBar.getMenuBar()
+    assert menuBar is not None
+    assert menuBar is window.menuBar()
+
+    menuTitles = [action.text() for action in menuBar.actions()]
+    assert "File(&F)" in menuTitles
+    assert "Edit(&E)" in menuTitles
+    assert "Settings(&S)" in menuTitles
+
+    assert window.darkTheme is False
+    assert titleBar.isDarkTheme() is False
+    assert "#000000" in menuBar.styleSheet()
+
+    window._toggleTheme()
+    assert window.darkTheme is True
+    assert titleBar.isDarkTheme() is True
+    assert "#ffffff" in menuBar.styleSheet()
+    assert "Switch to Light Theme" in window._themeToggleButton.text()
+
+    window._toggleTheme()
+    assert window.darkTheme is False
+    assert titleBar.isDarkTheme() is False
+    assert "#000000" in menuBar.styleSheet()
+    assert "Switch to Dark Theme" in window._themeToggleButton.text()
