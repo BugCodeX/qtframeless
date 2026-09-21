@@ -7,7 +7,7 @@ the frameless window implementation.
 
 from ctypes import POINTER, Structure, c_int, c_size_t, c_void_p
 from ctypes.wintypes import BOOL, DWORD, HWND, RECT, UINT
-from enum import Enum
+from enum import Enum, IntEnum
 
 
 class MARGINS(Structure):
@@ -108,7 +108,7 @@ DWMWA_COLOR_DEFAULT = 0xFFFFFFFF
 DWMWA_COLOR_NONE = 0xFFFFFFFE
 
 
-class WindowCornerPreference(Enum):
+class WindowCornerPreference(IntEnum):
     """Windows 11 window corner rounding preferences.
 
     Values correspond directly to ``DWM_WINDOW_CORNER_PREFERENCE`` constants.

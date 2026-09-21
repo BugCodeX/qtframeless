@@ -3,8 +3,8 @@
 import sys
 from pathlib import Path
 
-from PySide6.QtGui import QFont
-from PySide6.QtWidgets import (
+from qtpy.QtGui import QFont
+from qtpy.QtWidgets import (
     QApplication,
     QHBoxLayout,
     QPushButton,

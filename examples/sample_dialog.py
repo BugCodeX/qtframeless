@@ -10,9 +10,9 @@ Demonstrates:
 import sys
 from pathlib import Path
 
-from PySide6.QtCore import Qt
-from PySide6.QtGui import QFont, QIcon
-from PySide6.QtWidgets import (
+from qtpy.QtCore import Qt
+from qtpy.QtGui import QFont, QIcon
+from qtpy.QtWidgets import (
     QApplication,
     QFrame,
     QHBoxLayout,

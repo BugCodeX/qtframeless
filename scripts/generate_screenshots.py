@@ -21,7 +21,7 @@ if str(_repositoryRoot) not in sys.path:
     sys.path.insert(0, str(_repositoryRoot))
 
 from PIL import Image, ImageDraw
-from PySide6.QtWidgets import QApplication, QWidget
+from qtpy.QtWidgets import QApplication, QWidget
 
 from examples.sample_dialog import Window as DialogWindow
 from examples.sample_dpi_scaling import DpiScalingDemoWindow

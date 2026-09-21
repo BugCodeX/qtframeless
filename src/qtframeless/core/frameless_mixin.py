@@ -6,6 +6,7 @@ and drag-to-move delegation without duplicating code across concrete Qt window t
 
 from ctypes import byref, cast, sizeof, windll  # noqa: F401
 from ctypes.wintypes import LPRECT, MSG  # noqa: F401
+from enum import IntEnum
 from typing import cast as typeCast
 
 import win32con
@@ -70,7 +71,7 @@ class FramelessWindowMixin:
         Qt property reflecting and setting automatic DPI scaling permission.
     detectingThemeAllowed : Property(bool)
         Qt property reflecting and setting automatic theme detection permission.
-    windowCornerPreference : Property(object)
+    windowCornerPreference : Property(int)
         Qt property reflecting and setting Windows 11 corner rounding preference.
     borderColor : Property(object)
         Qt property reflecting and setting native window border color.
@@ -367,13 +368,21 @@ class FramelessWindowMixin:
         if isinstance(eventType, (bytes, bytearray, memoryview)):
             eventType = QByteArray(bytes(eventType))
         try:
-            return super().nativeEvent(eventType, message)
+            res = super().nativeEvent(eventType, message)
+            if isinstance(res, tuple):
+                handled, val = res
+                return handled, 0 if val is None else int(val)
+            return res
         except (ValueError, TypeError):
             try:
                 import shiboken6
 
                 if isinstance(message, int):
-                    return super().nativeEvent(eventType, shiboken6.VoidPtr(message))
+                    res = super().nativeEvent(eventType, shiboken6.VoidPtr(message))
+                    if isinstance(res, tuple):
+                        handled, val = res
+                        return handled, 0 if val is None else int(val)
+                    return res
             except Exception:
                 pass
             return False, 0
@@ -469,6 +478,25 @@ class FramelessWindowMixin:
         """
         super().setFixedSize(width, height)
         self.setResizable(False)
+
+    def setProperty(self, name: str, value: object) -> bool:
+        """Set a dynamic or static Qt property with cross-binding type normalization.
+
+        Parameters
+        ----------
+        name : str
+            Qt property name.
+        value : object
+            Property value to assign.
+
+        Returns
+        -------
+        bool
+            True if the property was successfully set, False otherwise.
+        """
+        if isinstance(value, IntEnum):
+            value = int(value)
+        return super().setProperty(name, value)  # type: ignore[misc]
 
     def getWindowCornerPreference(self) -> WindowCornerPreference:
         """Return the current Windows 11 window corner rounding preference.
@@ -645,21 +673,21 @@ class FramelessWindowMixin:
         doc="Automatic theme detection state.",
     )
     windowCornerPreference = Property(
-        object,
+        int,
         getWindowCornerPreference,
         setWindowCornerPreference,
         notify=windowCornerPreferenceChanged,
         doc="Windows 11 corner rounding preference.",
     )
     borderColor = Property(
-        object,
+        "QVariant",
         getBorderColor,
         setBorderColor,
         notify=borderColorChanged,
         doc="Native window border color.",
     )
     captionColor = Property(
-        object,
+        "QVariant",
         getCaptionColor,
         setCaptionColor,
         notify=captionColorChanged,

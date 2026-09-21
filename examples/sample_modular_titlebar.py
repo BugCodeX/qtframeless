@@ -9,9 +9,9 @@ Demonstrates:
 
 import sys
 
-from PySide6.QtCore import Qt
-from PySide6.QtGui import QFont
-from PySide6.QtWidgets import (
+from qtpy.QtCore import Qt
+from qtpy.QtGui import QFont
+from qtpy.QtWidgets import (
     QApplication,
     QFrame,
     QGridLayout,
