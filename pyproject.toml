@@ -32,6 +32,12 @@ Issues = "https://github.com/BugCodeX/qtframeless/issues"
 Repository = "https://github.com/BugCodeX/qtframeless"
 
 [project.optional-dependencies]
+docs = [
+  "griffe>=1.0.0",
+  "mkdocs>=1.6.0",
+  "mkdocs-material>=9.5.0",
+  "mkdocstrings[python]>=0.26.0",
+]
 pyqt6 = [
   "PyQt6>=6.11.0",
 ]
@@ -47,14 +53,17 @@ test = [
 
 [dependency-groups]
 dev = [
+  "pillow>=10.0.0",
   "pre-commit>=4.0.1",
   "pyright>=1.1.414",
+  "pyside6>=6.11.2",
   "pytest>=9.0.3",
   "pytest-cov>=7.1.0",
   "pytest-mock>=3.14.0",
   "pytest-qt>=4.2.0",
   "ruff>=0.16.8",
 ]
+
 
 # ============================================================
 # build-system
@@ -128,6 +137,7 @@ include = [
   "src/**/*.py",
   "examples/**/*.py",
   "tests/**/*.py",
+  "scripts/**/*.py",
 ]
 
 [tool.ruff.lint]

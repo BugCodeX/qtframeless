@@ -1,4 +1,6 @@
-.PHONY: help install install-dev lint format type-check test test-cov pre-commit-install pre-commit-run
+.PHONY: help install install-dev lint format type-check test test-cov docs-install docs-serve docs-build screenshots pre-commit-install pre-commit-run
+
+export NO_MKDOCS_2_WARNING := 1
 
 UV := uv
 # =======================================================================
@@ -12,6 +14,12 @@ help:
 	@echo "Tests:"
 	@echo "    make test             Execute tests using pytest"
 	@echo "    make test-cov         Run pytest with coverage reporting"
+	@echo ""
+	@echo "Documentation:"
+	@echo "    make docs-install     Install documentation dependencies"
+	@echo "    make docs-serve       Serve documentation locally"
+	@echo "    make docs-build       Build documentation with mkdocs"
+	@echo "    make screenshots      Generate screenshots and showcase GIF"
 	@echo ""
 	@echo "Quality:"
 	@echo "    make lint             Check code style using ruff"
@@ -64,6 +72,28 @@ test:
 
 test-cov:
 	$(UV) run pytest --cov=qtframeless --cov-report=term-missing --cov-report=html
+
+# ---------------------------------------------------------------------------
+# Documentation
+# ---------------------------------------------------------------------------
+
+docs-install:
+	$(UV) sync --extra docs
+
+docs-serve:
+	$(UV) run mkdocs serve
+
+docs-build:
+	$(UV) run mkdocs build --clean
+
+screenshots:
+	$(UV) run python scripts/generate_screenshots.py
+
+screenshots-win11:
+	$(UV) run python scripts/generate_screenshots.py --os win11
+
+screenshots-win10:
+	$(UV) run python scripts/generate_screenshots.py --os win10
 
 # ---------------------------------------------------------------------------
 # Cleanup
