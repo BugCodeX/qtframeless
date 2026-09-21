@@ -6,7 +6,7 @@ intelligent drag hit-testing, menu bar integration, and dynamic theme adaptation
 
 from unittest.mock import MagicMock
 
-from qtpy.QtCore import QEvent, QPointF, Qt, Signal
+from qtpy.QtCore import QEvent, QPoint, QPointF, Qt, Signal
 from qtpy.QtGui import (
     QColor,
     QFont,
@@ -31,8 +31,10 @@ from qtframelesskit.windows.title_bar import (
     CloseButton,
     FullScreenButton,
     MaximizeButton,
+    MenuStyler,
     MinimizeButton,
     TitleBar,
+    TitleBarDragHandler,
     VectorButton,
 )
 from qtframelesskit.windows.window import FramelessMainWindow
@@ -1802,3 +1804,145 @@ def test_vector_buttons_hover_transitions_over_parent_background(qtbot):
     )
     closeRestoredImage = window.grab().toImage()
     assert closeRestoredImage.pixelColor(posClose.x() + 5, posClose.y() + 5).name() == "#1e1e1e"
+
+
+def test_titlebar_subpackage_direct_exports() -> None:
+    """Verify MenuStyler and TitleBarDragHandler are exported and listed in __all__.
+
+    Ensures both MenuStyler and TitleBarDragHandler are available directly from
+    the title_bar subpackage and match their internal module definitions.
+    """
+    import qtframelesskit.windows.title_bar as titleBarModule
+    from qtframelesskit.windows.title_bar.drag_handler import (
+        TitleBarDragHandler as ModularTitleBarDragHandler,
+    )
+    from qtframelesskit.windows.title_bar.menu_styler import (
+        MenuStyler as ModularMenuStyler,
+    )
+
+    assert hasattr(titleBarModule, "MenuStyler")
+    assert titleBarModule.MenuStyler is ModularMenuStyler
+    assert "MenuStyler" in titleBarModule.__all__
+
+    assert hasattr(titleBarModule, "TitleBarDragHandler")
+    assert titleBarModule.TitleBarDragHandler is ModularTitleBarDragHandler
+    assert "TitleBarDragHandler" in titleBarModule.__all__
+
+
+def test_menu_styler_isolated_styling(qtbot):
+    """Verify MenuStyler applies Fluent styles to standalone QMenuBar with DPI scaling.
+
+    Tests both light and dark theme palettes along with standard, high, and fallback
+    dots-per-inch scaling factors to ensure correct QSS padding and colors are set.
+
+    Parameters
+    ----------
+    qtbot : pytestqt.qtbot.QtBot
+        Pytest-qt fixture for widget lifecycle management.
+    """
+    menuBar = QMenuBar()
+    qtbot.addWidget(menuBar)
+
+    # 1. Light theme with standard 96 DPI
+    MenuStyler.applyFluentMenuStyle(menuBar, isDark=False, dpi=96)
+    lightStyleSheet = menuBar.styleSheet()
+    assert "padding: 0px 0px 0px 8px;" in lightStyleSheet
+    assert "background: transparent;" in lightStyleSheet
+    assert "color: #000000;" in lightStyleSheet
+    assert "background-color: #f9f9f9;" in lightStyleSheet
+    assert "border: 1px solid rgba(0, 0, 0, 0.12);" in lightStyleSheet
+
+    # 2. Dark theme with standard 96 DPI
+    MenuStyler.applyFluentMenuStyle(menuBar, isDark=True, dpi=96)
+    darkStyleSheet = menuBar.styleSheet()
+    assert "padding: 0px 0px 0px 8px;" in darkStyleSheet
+    assert "background: transparent;" in darkStyleSheet
+    assert "color: #ffffff;" in darkStyleSheet
+    assert "background-color: #2c2c2c;" in darkStyleSheet
+    assert "background-color: #0078d4;" in darkStyleSheet
+    assert "border: 1px solid rgba(255, 255, 255, 0.15);" in darkStyleSheet
+
+    # 3. DPI scaling at 144 DPI (1.5x scale -> 12px left padding)
+    MenuStyler.applyFluentMenuStyle(menuBar, isDark=False, dpi=144)
+    assert "padding: 0px 0px 0px 12px;" in menuBar.styleSheet()
+
+    # 4. DPI scaling at 192 DPI (2.0x scale -> 16px left padding)
+    MenuStyler.applyFluentMenuStyle(menuBar, isDark=True, dpi=192)
+    assert "padding: 0px 0px 0px 16px;" in menuBar.styleSheet()
+
+    # 5. Non-positive DPI fallback defaults to 96 DPI (8px left padding)
+    MenuStyler.applyFluentMenuStyle(menuBar, isDark=False, dpi=0)
+    assert "padding: 0px 0px 0px 8px;" in menuBar.styleSheet()
+
+    MenuStyler.applyFluentMenuStyle(menuBar, isDark=False, dpi=-10)
+    assert "padding: 0px 0px 0px 8px;" in menuBar.styleSheet()
+
+
+def test_drag_handler_isolated_hit_testing(qtbot):
+    """Verify TitleBarDragHandler hit-testing detects interactive child widgets and menus.
+
+    Tests center widget, nested child, and menu bar identification as interactive
+    elements while treating non-interactive labels and background areas as draggable.
+
+    Parameters
+    ----------
+    qtbot : pytestqt.qtbot.QtBot
+        Pytest-qt fixture for widget lifecycle management.
+    """
+    window = QWidget()
+    qtbot.addWidget(window)
+    window.resize(800, 400)
+    window.show()
+
+    titleBar = TitleBar(window)
+    titleBar.resize(800, 40)
+    titleBar.show()
+
+    dragHandler = TitleBarDragHandler(titleBar)
+
+    # 1. Background areas and non-interactive title labels return False
+    backgroundPosition = QPoint(60, 20)
+    assert dragHandler.isInteractiveChild(None, backgroundPosition) is False
+
+    titleLabel = titleBar.getTitle()
+    assert dragHandler.isInteractiveChild(titleLabel, backgroundPosition) is False
+
+    iconLabel = titleBar.getIcon()
+    assert dragHandler.isInteractiveChild(iconLabel, backgroundPosition) is False
+
+    # 2. Center widget installed: center widget and its nested children return True
+    centerContainer = QWidget(titleBar)
+    centerContainer.setGeometry(200, 5, 300, 30)
+    nestedEditor = QLineEdit(centerContainer)
+    nestedEditor.setGeometry(10, 5, 200, 20)
+    titleBar.setCenterWidget(centerContainer)
+
+    centerPosition = QPoint(250, 20)
+    assert dragHandler.isInteractiveChild(centerContainer, centerPosition) is True
+    assert dragHandler.isInteractiveChild(nestedEditor, centerPosition) is True
+
+    # Interaction outside center widget remains non-interactive
+    assert dragHandler.isInteractiveChild(None, backgroundPosition) is False
+    assert dragHandler.isInteractiveChild(titleLabel, backgroundPosition) is False
+
+    # 3. Menu bar installed: menu bar widget, nested child, and contained point return True
+    menuBar = QMenuBar(titleBar)
+    menuBar.addMenu("File")
+    titleBar.setMenuBar(menuBar)
+    titleBar.layout().activate()
+
+    menuBarCenter = menuBar.geometry().center()
+    assert dragHandler.isInteractiveChild(menuBar, menuBarCenter) is True
+    assert dragHandler.isInteractiveChild(None, menuBarCenter) is True
+
+    nestedMenuWidget = QWidget(menuBar)
+    assert dragHandler.isInteractiveChild(nestedMenuWidget, menuBarCenter) is True
+
+    # 4. Detaching center widget and menu bar restores non-interactive state
+    titleBar.removeCenterWidget()
+    titleBar.removeMenuBar()
+
+    assert dragHandler.isInteractiveChild(centerContainer, centerPosition) is False
+    assert dragHandler.isInteractiveChild(nestedEditor, centerPosition) is False
+    assert dragHandler.isInteractiveChild(menuBar, menuBarCenter) is False
+    assert dragHandler.isInteractiveChild(None, menuBarCenter) is False

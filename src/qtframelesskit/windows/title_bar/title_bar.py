@@ -30,13 +30,17 @@ from .buttons import (
     MinimizeButton,
     VectorButton,
 )
+from .drag_handler import TitleBarDragHandler
+from .menu_styler import MenuStyler
 
 __all__ = [
     "CloseButton",
     "FullScreenButton",
     "MaximizeButton",
+    "MenuStyler",
     "MinimizeButton",
     "TitleBar",
+    "TitleBarDragHandler",
     "VectorButton",
 ]
 
@@ -73,6 +77,7 @@ class TitleBar(QWidget):
         self._menuBar: QMenuBar | None = None
         self._titleAlignment: Qt.AlignmentFlag = Qt.AlignmentFlag.AlignLeft
         self._autoStyleMenuBar: bool = True
+        self._dragHandler = TitleBarDragHandler(self)
 
         self._iconLabel = QLabel()
         self._titleLabel = QLabel()
@@ -240,31 +245,8 @@ class TitleBar(QWidget):
         event : QMouseEvent
             Mouse double-click event.
         """
-        if self._baseWindowResizable and event.button() == Qt.MouseButton.LeftButton:
-            clickPosition = (
-                event.position().toPoint() if hasattr(event, "position") else event.pos()
-            )
-            targetChild = self.childAt(clickPosition)
-            isCenterInteractive = (
-                self._centerWidget is not None
-                and targetChild is not None
-                and (
-                    targetChild is self._centerWidget
-                    or self._centerWidget.isAncestorOf(targetChild)
-                )
-            )
-            isMenuBarInteractive = self._menuBar is not None and (
-                (
-                    targetChild is not None
-                    and (targetChild is self._menuBar or self._menuBar.isAncestorOf(targetChild))
-                )
-                or self._menuBar.geometry().contains(clickPosition)
-            )
-            isInteractiveChild = isCenterInteractive or isMenuBarInteractive
-            if not isInteractiveChild:
-                self._handleMaximizeClicked()
-                event.accept()
-                return
+        if self._dragHandler.handleMouseDoubleClick(event):
+            return
         super().mouseDoubleClickEvent(event)
 
     def mousePressEvent(self, event: QMouseEvent) -> None:
@@ -275,33 +257,8 @@ class TitleBar(QWidget):
         event : QMouseEvent
             Mouse press event.
         """
-        if event.button() == Qt.MouseButton.LeftButton and self._pressToMove:
-            clickPosition = (
-                event.position().toPoint() if hasattr(event, "position") else event.pos()
-            )
-            targetChild = self.childAt(clickPosition)
-            isMenuBarClick = self._menuBar is not None and (
-                (
-                    targetChild is not None
-                    and (targetChild is self._menuBar or self._menuBar.isAncestorOf(targetChild))
-                )
-                or self._menuBar.geometry().contains(clickPosition)
-            )
-            isDraggableWidget = not isMenuBarClick and targetChild in (
-                None,
-                self._titleLabel,
-                self._iconLabel,
-                self._centerContainer,
-                self._cornerWidget,
-            )
-            if isDraggableWidget:
-                targetWindow = self.window()
-                if targetWindow:
-                    windowHandle = targetWindow.windowHandle()
-                    if windowHandle:
-                        windowHandle.startSystemMove()
-                        event.accept()
-                        return
+        if self._dragHandler.handleMousePress(event):
+            return
         super().mousePressEvent(event)
 
     def eventFilter(self, watchedObject: object, event: QEvent) -> bool:
@@ -748,116 +705,12 @@ class TitleBar(QWidget):
         dpi : int, optional
             Screen dots-per-inch used to scale layout padding. Defaults to 96.
         """
-        if dpi <= 0:
-            dpi = 96
-        scaleFactor = dpi / 96.0
-        scaledPaddingLeft = max(4, round(8 * scaleFactor))
-
-        menuBarRule = (
-            f"QMenuBar {{\n"
-            f"    background: transparent;\n"
-            f"    border: none;\n"
-            f"    padding: 0px 0px 0px {scaledPaddingLeft}px;\n"
-            f"    margin: 0px;\n"
-            f"    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;\n"
-            f"    font-size: 13px;\n"
-            f"}}\n"
-        )
-
-        if isDark:
-            styleSheet = (
-                menuBarRule
-                + """QMenuBar::item {
-    background: transparent;
-    color: #ffffff;
-    padding: 5px 10px;
-    border-radius: 4px;
-}
-QMenuBar::item:selected {
-    background-color: rgba(255, 255, 255, 0.1);
-}
-QMenuBar::item:pressed {
-    background-color: rgba(255, 255, 255, 0.15);
-}
-QMenu {
-    background-color: #2c2c2c;
-    color: #ffffff;
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    border-radius: 8px;
-    padding: 6px;
-    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-    font-size: 13px;
-}
-QMenu::item {
-    background: transparent;
-    color: #ffffff;
-    padding: 6px 28px 6px 14px;
-    border-radius: 4px;
-}
-QMenu::item:selected {
-    background-color: #0078d4;
-    color: #ffffff;
-}
-QMenu::item:disabled {
-    color: rgba(255, 255, 255, 0.4);
-}
-QMenu::separator {
-    height: 1px;
-    background: rgba(255, 255, 255, 0.12);
-    margin: 4px 8px;
-}
-"""
-            )
-        else:
-            styleSheet = (
-                menuBarRule
-                + """QMenuBar::item {
-    background: transparent;
-    color: #000000;
-    padding: 5px 10px;
-    border-radius: 4px;
-}
-QMenuBar::item:selected {
-    background-color: rgba(0, 0, 0, 0.08);
-}
-QMenuBar::item:pressed {
-    background-color: rgba(0, 0, 0, 0.12);
-}
-QMenu {
-    background-color: #f9f9f9;
-    color: #000000;
-    border: 1px solid rgba(0, 0, 0, 0.12);
-    border-radius: 8px;
-    padding: 6px;
-    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-    font-size: 13px;
-}
-QMenu::item {
-    background: transparent;
-    color: #000000;
-    padding: 6px 28px 6px 14px;
-    border-radius: 4px;
-}
-QMenu::item:selected {
-    background-color: rgba(0, 0, 0, 0.08);
-    color: #000000;
-}
-QMenu::item:disabled {
-    color: rgba(0, 0, 0, 0.35);
-}
-QMenu::separator {
-    height: 1px;
-    background: rgba(0, 0, 0, 0.1);
-    margin: 4px 8px;
-}
-"""
-            )
-        menuBar.setStyleSheet(styleSheet)
+        MenuStyler.applyFluentMenuStyle(menuBar, isDark=isDark, dpi=dpi)
 
     def _updateMenuBarStyle(self) -> None:
         """Apply Fluent transparent QMenuBar and QMenu popup styles matching theme."""
         if self._autoStyleMenuBar and self._menuBar is not None:
-            TitleBar.applyFluentMenuStyle(self._menuBar, self._isDarkTheme, self.getCurrentDpi())
+            MenuStyler.applyFluentMenuStyle(self._menuBar, self._isDarkTheme, self.getCurrentDpi())
 
     def getBackgroundColor(self) -> QColor | None:
         """Return the current background color of the title bar.
