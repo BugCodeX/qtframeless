@@ -1,4 +1,4 @@
-# AGENTS.md — qwindowkitpy
+# AGENTS.md — qtframeless
 
 ---
 
@@ -16,6 +16,7 @@ Use these specialized skills for detailed patterns and strict project convention
 | `grill-with-docs` | Interview a change inside a repo; writes `CONTEXT.md` and ADRs as vocabulary settles | [.agents/skills/grill-with-docs/SKILL.md](.agents/skills/grill-with-docs/SKILL.md) |
 | `systematic-debugging` | Root cause investigation before any fix — Iron Law, four phases, Qt/pytest-qt instrumentation | [.agents/skills/systematic-debugging/SKILL.md](.agents/skills/systematic-debugging/SKILL.md) |
 | `codebase-design` | Design deep modules with high leverage, clean seams, and Design It Twice | [.agents/skills/codebase-design/SKILL.md](.agents/skills/codebase-design/SKILL.md) |
+| `release-notes` | Comprehensive release notes, changelog updates, version tagging, and GitHub Releases | [.agents/skills/release-notes/SKILL.md](.agents/skills/release-notes/SKILL.md) |
 
 ---
 
@@ -34,6 +35,7 @@ When performing any of these actions, **ALWAYS invoke the corresponding skill FI
 | Reviewing code for naming consistency or abbreviation violations | `naming-conventions` |
 | Writing, updating, fixing, or debugging Qt widget tests or signals | `qt-testing` |
 | Creating, reviewing, drafting, or staging Git commits | `commit-hygiene` |
+| Creating, drafting, or publishing release notes, changelogs, version tags, or GitHub Releases | `release-notes` |
 | User describes a loose idea, feature direction, or change before any spec exists (no repo context needed) | `grill-me` |
 | Starting `sdd-propose` Step 0 with fuzzy intent or unsettled vocabulary inside this repo | `grill-with-docs` |
 | User says "tengo una idea", "quiero agregar X", "pensé en cambiar Y" without a clear spec | `grill-me` |

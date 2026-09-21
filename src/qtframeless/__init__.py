@@ -5,6 +5,8 @@ import sys
 
 from qtframeless.exceptions import PlatformNotSupportedError
 
+__version__ = "0.1.0"
+
 if sys.platform != "win32":
     raise PlatformNotSupportedError("qtframeless only supports Windows platforms.")
 
@@ -44,4 +46,5 @@ __all__ = [
     "TitleBar",
     "WindowCornerPreference",
     "WindowEffect",
+    "__version__",
 ]

@@ -41,3 +41,10 @@ def test_import_succeeds_on_win32(monkeypatch):
 
     module = importlib.import_module("qtframeless")
     assert module is not None
+
+
+def test_version():
+    """Verify that qtframeless defines the expected package version."""
+    import qtframeless
+
+    assert qtframeless.__version__ == "0.1.0"
