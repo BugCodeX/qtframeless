@@ -74,8 +74,5 @@ jobs:
         with:
           python-version: "3.11"
 
-      - name: Install dependencies
-        run: uv sync --extra test
-
       - name: Test platform restriction
-        run: uv run pytest -p no:qt tests/test_platform.py
+        run: uv run --no-project --with pytest pytest -o pythonpath=src tests/test_platform.py
