@@ -603,6 +603,9 @@ def test_titlebar_set_and_get_menubar(qtbot):
     iconIndex = layout.indexOf(titleBar.getIcon())
     menuBarIndex = layout.indexOf(menuBar)
     assert menuBarIndex == iconIndex + 1
+    layoutItem = layout.itemAt(menuBarIndex)
+    assert layoutItem is not None
+    assert bool(layoutItem.alignment() & Qt.AlignmentFlag.AlignVCenter)
 
 
 def test_titlebar_set_menubar_replaces_existing(qtbot):
@@ -721,11 +724,21 @@ def test_titlebar_menubar_autostyle_theme_switching(qtbot):
     titleBar.setDarkTheme(False)
     assert "#000000" in menuBar.styleSheet()
     assert "#f9f9f9" in menuBar.styleSheet()
+    assert "font-size: 13px;" in menuBar.styleSheet()
+    assert "padding: 5px 10px;" in menuBar.styleSheet()
+    assert "border-radius: 8px;" in menuBar.styleSheet()
+    assert "padding: 6px 28px 6px 14px;" in menuBar.styleSheet()
+    assert "rgba(0, 0, 0, 0.08)" in menuBar.styleSheet()
 
     # Dark theme stylesheet checks
     titleBar.setDarkTheme(True)
     assert "#ffffff" in menuBar.styleSheet()
     assert "#2c2c2c" in menuBar.styleSheet()
+    assert "font-size: 13px;" in menuBar.styleSheet()
+    assert "padding: 5px 10px;" in menuBar.styleSheet()
+    assert "border-radius: 8px;" in menuBar.styleSheet()
+    assert "padding: 6px 28px 6px 14px;" in menuBar.styleSheet()
+    assert "rgba(255, 255, 255, 0.1)" in menuBar.styleSheet()
 
 
 def test_titlebar_menubar_autostyle_disabled(qtbot):

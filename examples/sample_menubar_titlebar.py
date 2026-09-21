@@ -51,7 +51,7 @@ class Window(FramelessMainWindow):
         if titleBar is not None:
             titleBar.setTitleAlignment(Qt.AlignmentFlag.AlignCenter)
             titleBar.setTitleBarFont(QFont("Segoe UI", 11, QFont.Weight.Medium))
-            titleBar.setIconSize(20, 20)
+            titleBar.setIconSize(18, 18)
             titleBar.setTitleBarHint(["min", "max", "close"])
 
         # 2. Integrate QMenuBar into the TitleBar

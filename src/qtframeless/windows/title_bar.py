@@ -640,7 +640,7 @@ class TitleBar(QWidget):
         if layout is not None:
             iconIndex = layout.indexOf(self._iconLabel)
             insertIndex = iconIndex + 1 if iconIndex >= 0 else 0
-            layout.insertWidget(insertIndex, menuBar)
+            layout.insertWidget(insertIndex, menuBar, 0, Qt.AlignmentFlag.AlignVCenter)
 
         self._updateMenuBarStyle()
 
@@ -750,11 +750,13 @@ class TitleBar(QWidget):
 QMenuBar {
     background: transparent;
     border: none;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    font-size: 13px;
 }
 QMenuBar::item {
     background: transparent;
     color: #ffffff;
-    padding: 4px 8px;
+    padding: 5px 10px;
     border-radius: 4px;
 }
 QMenuBar::item:selected {
@@ -767,13 +769,15 @@ QMenu {
     background-color: #2c2c2c;
     color: #ffffff;
     border: 1px solid rgba(255, 255, 255, 0.15);
-    border-radius: 6px;
-    padding: 4px;
+    border-radius: 8px;
+    padding: 6px;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    font-size: 13px;
 }
 QMenu::item {
     background: transparent;
     color: #ffffff;
-    padding: 5px 24px 5px 20px;
+    padding: 6px 28px 6px 14px;
     border-radius: 4px;
 }
 QMenu::item:selected {
@@ -794,15 +798,17 @@ QMenu::separator {
 QMenuBar {
     background: transparent;
     border: none;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    font-size: 13px;
 }
 QMenuBar::item {
     background: transparent;
     color: #000000;
-    padding: 4px 8px;
+    padding: 5px 10px;
     border-radius: 4px;
 }
 QMenuBar::item:selected {
-    background-color: rgba(0, 0, 0, 0.07);
+    background-color: rgba(0, 0, 0, 0.08);
 }
 QMenuBar::item:pressed {
     background-color: rgba(0, 0, 0, 0.12);
@@ -811,17 +817,19 @@ QMenu {
     background-color: #f9f9f9;
     color: #000000;
     border: 1px solid rgba(0, 0, 0, 0.12);
-    border-radius: 6px;
-    padding: 4px;
+    border-radius: 8px;
+    padding: 6px;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    font-size: 13px;
 }
 QMenu::item {
     background: transparent;
     color: #000000;
-    padding: 5px 24px 5px 20px;
+    padding: 6px 28px 6px 14px;
     border-radius: 4px;
 }
 QMenu::item:selected {
-    background-color: rgba(0, 0, 0, 0.07);
+    background-color: rgba(0, 0, 0, 0.08);
     color: #000000;
 }
 QMenu::item:disabled {
