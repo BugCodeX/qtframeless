@@ -373,4 +373,3 @@ def test_frameless_mixin_dark_theme_palette_sync(qtbot):
     assert lightPalette.color(QPalette.ColorRole.Window).name().lower() == "#f3f3f3"
     assert lightPalette.color(QPalette.ColorRole.WindowText).name().lower() == "#000000"
     assert lightPalette.color(QPalette.ColorRole.Text).name().lower() == "#000000"
-

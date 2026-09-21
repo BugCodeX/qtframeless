@@ -175,7 +175,9 @@ def test_frame_controller_nc_mouse_events(qtbot, monkeypatch) -> None:
     maximizeButton = titleBar.getMaximizeButton()
     assert maximizeButton is not None
 
-    monkeypatch.setattr("qtframeless.core.frame_controller.windll.user32.TrackMouseEvent", lambda pointer: True)
+    monkeypatch.setattr(
+        "qtframeless.core.frame_controller.windll.user32.TrackMouseEvent", lambda pointer: True
+    )
 
     # 1. WM_NCMOUSEMOVE with HTMAXBUTTON
     syntheticMessage = MSG()
@@ -250,9 +252,7 @@ def test_frame_controller_nc_calc_size(qtbot, monkeypatch) -> None:
 
     # 2. Maximized state: inset by border thickness
     monkeypatch.setattr("qtframeless.core.frameless_mixin.isMaximized", lambda hWnd: True)
-    monkeypatch.setattr(
-        "qtframeless.core.frameless_mixin.getResizeBorderThickness", lambda hWnd: 8
-    )
+    monkeypatch.setattr("qtframeless.core.frameless_mixin.getResizeBorderThickness", lambda hWnd: 8)
     monkeypatch.setattr("qtframeless.core.frameless_mixin.Taskbar.isAutoHide", lambda: False)
 
     result = controller.handleNativeEvent(QByteArray(b"windows_generic_MSG"), messagePointer)

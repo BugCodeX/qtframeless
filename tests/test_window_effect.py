@@ -764,4 +764,3 @@ def test_set_dark_theme_dwm_attribute(monkeypatch):
         DWMWINDOWATTRIBUTE.DWMWA_USE_IMMERSIVE_DARK_MODE.value,
         0,
     ) in recordedCalls
-

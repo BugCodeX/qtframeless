@@ -668,5 +668,3 @@ def test_vector_buttons_hover_transitions_over_parent_background(qtbot):
     )
     closeRestoredImage = window.grab().toImage()
     assert closeRestoredImage.pixelColor(posClose.x() + 5, posClose.y() + 5).name() == "#1e1e1e"
-
-

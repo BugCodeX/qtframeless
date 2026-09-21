@@ -1063,9 +1063,3 @@ def test_menubar_actions_visible_without_overflow_button(qtbot):
         actionGeometry = menuBar.actionGeometry(action)
         assert actionGeometry.width() > 0
         assert actionGeometry.height() > 0
-
-
-
-
-
-

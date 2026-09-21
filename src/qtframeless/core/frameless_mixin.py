@@ -126,9 +126,7 @@ class FramelessWindowMixin:
         if not hasattr(self, "_titleBar"):
             self._titleBar: TitleBar | None = None
         if not hasattr(self, "_themeController"):
-            self._themeController = ThemeController(
-                self, isMaterial=self._isMaterialBackdrop()
-            )
+            self._themeController = ThemeController(self, isMaterial=self._isMaterialBackdrop())
             self._themeController.darkThemeChanged.connect(self.darkThemeChanged)
             self._themeController.detectingThemeAllowedChanged.connect(
                 self.detectingThemeAllowedChanged

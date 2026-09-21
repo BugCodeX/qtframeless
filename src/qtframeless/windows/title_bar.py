@@ -253,18 +253,12 @@ class TitleBar(QWidget):
                     or self._centerWidget.isAncestorOf(targetChild)
                 )
             )
-            isMenuBarInteractive = (
-                self._menuBar is not None
-                and (
-                    (
-                        targetChild is not None
-                        and (
-                            targetChild is self._menuBar
-                            or self._menuBar.isAncestorOf(targetChild)
-                        )
-                    )
-                    or self._menuBar.geometry().contains(clickPosition)
+            isMenuBarInteractive = self._menuBar is not None and (
+                (
+                    targetChild is not None
+                    and (targetChild is self._menuBar or self._menuBar.isAncestorOf(targetChild))
                 )
+                or self._menuBar.geometry().contains(clickPosition)
             )
             isInteractiveChild = isCenterInteractive or isMenuBarInteractive
             if not isInteractiveChild:
@@ -286,28 +280,19 @@ class TitleBar(QWidget):
                 event.position().toPoint() if hasattr(event, "position") else event.pos()
             )
             targetChild = self.childAt(clickPosition)
-            isMenuBarClick = (
-                self._menuBar is not None
-                and (
-                    (
-                        targetChild is not None
-                        and (
-                            targetChild is self._menuBar
-                            or self._menuBar.isAncestorOf(targetChild)
-                        )
-                    )
-                    or self._menuBar.geometry().contains(clickPosition)
+            isMenuBarClick = self._menuBar is not None and (
+                (
+                    targetChild is not None
+                    and (targetChild is self._menuBar or self._menuBar.isAncestorOf(targetChild))
                 )
+                or self._menuBar.geometry().contains(clickPosition)
             )
-            isDraggableWidget = (
-                not isMenuBarClick
-                and targetChild in (
-                    None,
-                    self._titleLabel,
-                    self._iconLabel,
-                    self._centerContainer,
-                    self._cornerWidget,
-                )
+            isDraggableWidget = not isMenuBarClick and targetChild in (
+                None,
+                self._titleLabel,
+                self._iconLabel,
+                self._centerContainer,
+                self._cornerWidget,
             )
             if isDraggableWidget:
                 targetWindow = self.window()
@@ -780,7 +765,9 @@ class TitleBar(QWidget):
         )
 
         if isDark:
-            styleSheet = menuBarRule + """QMenuBar::item {
+            styleSheet = (
+                menuBarRule
+                + """QMenuBar::item {
     background: transparent;
     color: #ffffff;
     padding: 5px 10px;
@@ -820,8 +807,11 @@ QMenu::separator {
     margin: 4px 8px;
 }
 """
+            )
         else:
-            styleSheet = menuBarRule + """QMenuBar::item {
+            styleSheet = (
+                menuBarRule
+                + """QMenuBar::item {
     background: transparent;
     color: #000000;
     padding: 5px 10px;
@@ -861,14 +851,13 @@ QMenu::separator {
     margin: 4px 8px;
 }
 """
+            )
         menuBar.setStyleSheet(styleSheet)
 
     def _updateMenuBarStyle(self) -> None:
         """Apply Fluent transparent QMenuBar and QMenu popup styles matching theme."""
         if self._autoStyleMenuBar and self._menuBar is not None:
-            TitleBar.applyFluentMenuStyle(
-                self._menuBar, self._isDarkTheme, self.getCurrentDpi()
-            )
+            TitleBar.applyFluentMenuStyle(self._menuBar, self._isDarkTheme, self.getCurrentDpi())
 
     def getBackgroundColor(self) -> QColor | None:
         """Return the current background color of the title bar.
