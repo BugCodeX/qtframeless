@@ -4,20 +4,38 @@ version = "0.1.0"
 description = "Modern, cross-Qt frameless window framework for Windows in pure Python."
 readme = "README.md"
 requires-python = ">=3.10"
-license = "MIT"
-license-files = ["LICENSE"]
+license = { text = "MIT" }
 authors = [{ name = "BugCodeX" }]
 maintainers = [{ name = "BugCodeX", email = "busine015@gmail.com" }]
-keywords = ["frameless", "pyqt5", "pyqt6", "pyside6", "qt", "snap-layouts", "win32"]
+keywords = [
+  "acrylic",
+  "dwm",
+  "frameless",
+  "frameless-window",
+  "mica",
+  "pyqt5",
+  "pyqt6",
+  "pyside6",
+  "qt",
+  "snap-layouts",
+  "titlebar",
+  "win32",
+]
 classifiers = [
-  "Development Status :: 4 - Beta",
+  "Development Status :: 5 - Production/Stable",
   "Environment :: Win32 (MS Windows)",
   "Intended Audience :: Developers",
+  "License :: OSI Approved :: MIT License",
   "Operating System :: Microsoft :: Windows",
+  "Operating System :: Microsoft :: Windows :: Windows 10",
+  "Operating System :: Microsoft :: Windows :: Windows 11",
+  "Programming Language :: Python :: 3",
   "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
   "Programming Language :: Python :: 3.13",
+  "Topic :: Desktop Environment :: Window Managers",
+  "Topic :: Software Development :: Libraries :: Python Modules",
   "Topic :: Software Development :: User Interfaces",
 ]
 dependencies = [
@@ -192,6 +210,9 @@ quote-style = "double"
 indent-style = "space"
 skip-magic-trailing-comma = false
 docstring-code-format = true
+
+[tool.setuptools.package-data]
+qtframeless = ["py.typed"]
 
 [tool.setuptools.packages.find]
 where = ["src"]
