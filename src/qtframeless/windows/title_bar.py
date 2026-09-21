@@ -150,6 +150,7 @@ class TitleBar(QWidget):
         cornerLayout = QHBoxLayout()
         cornerLayout.setContentsMargins(0, 0, 0, 0)
         cornerLayout.setSpacing(0)
+        cornerLayout.setAlignment(Qt.AlignmentFlag.AlignTop)
         for button in self._buttonDict.values():
             cornerLayout.addWidget(button)
         self._cornerWidget.setLayout(cornerLayout)
@@ -635,12 +636,21 @@ class TitleBar(QWidget):
 
         self._menuBar = menuBar
         menuBar.setSizePolicy(QSizePolicy.Policy.Maximum, QSizePolicy.Policy.Preferred)
+        menuBar.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground, True)
+        menuBar.setAutoFillBackground(False)
+        if bool(menuBar.styleSheet().strip()):
+            self._autoStyleMenuBar = False
 
         layout = self.layout()
         if layout is not None:
             iconIndex = layout.indexOf(self._iconLabel)
             insertIndex = iconIndex + 1 if iconIndex >= 0 else 0
-            layout.insertWidget(insertIndex, menuBar, 0, Qt.AlignmentFlag.AlignVCenter)
+            layout.insertWidget(
+                insertIndex,
+                menuBar,
+                0,
+                Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignVCenter,
+            )
 
         self._updateMenuBarStyle()
 
@@ -740,25 +750,36 @@ class TitleBar(QWidget):
         if autoStyle and self._menuBar is not None:
             self._updateMenuBarStyle()
 
-    def _updateMenuBarStyle(self) -> None:
-        """Apply Fluent transparent QMenuBar and QMenu popup styles matching theme."""
-        if not self._autoStyleMenuBar or self._menuBar is None:
-            return
+    @staticmethod
+    def applyFluentMenuStyle(menuBar: QMenuBar, isDark: bool = False, dpi: int = 96) -> None:
+        """Apply Fluent design transparent styles and popup menu styling to a menu bar.
 
-        scaleFactor = getattr(self, "_currentDpi", 96) / 96.0
-        scaledMarginLeft = max(4, round(8 * scaleFactor))
+        Parameters
+        ----------
+        menuBar : QMenuBar
+            Target menu bar instance to style.
+        isDark : bool, optional
+            True for dark theme palette, False for light theme. Defaults to False.
+        dpi : int, optional
+            Screen dots-per-inch used to scale layout padding. Defaults to 96.
+        """
+        if dpi <= 0:
+            dpi = 96
+        scaleFactor = dpi / 96.0
+        scaledPaddingLeft = max(4, round(8 * scaleFactor))
 
-        menuBarRule = f"""\
-QMenuBar {{
-    background: transparent;
-    border: none;
-    margin-left: {scaledMarginLeft}px;
-    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-    font-size: 13px;
-}}
-"""
+        menuBarRule = (
+            f"QMenuBar {{\n"
+            f"    background: transparent;\n"
+            f"    border: none;\n"
+            f"    padding: 0px 0px 0px {scaledPaddingLeft}px;\n"
+            f"    margin: 0px;\n"
+            f"    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;\n"
+            f"    font-size: 13px;\n"
+            f"}}\n"
+        )
 
-        if self._isDarkTheme:
+        if isDark:
             styleSheet = menuBarRule + """QMenuBar::item {
     background: transparent;
     color: #ffffff;
@@ -840,7 +861,14 @@ QMenu::separator {
     margin: 4px 8px;
 }
 """
-        self._menuBar.setStyleSheet(styleSheet)
+        menuBar.setStyleSheet(styleSheet)
+
+    def _updateMenuBarStyle(self) -> None:
+        """Apply Fluent transparent QMenuBar and QMenu popup styles matching theme."""
+        if self._autoStyleMenuBar and self._menuBar is not None:
+            TitleBar.applyFluentMenuStyle(
+                self._menuBar, self._isDarkTheme, self.getCurrentDpi()
+            )
 
     def getBackgroundColor(self) -> QColor | None:
         """Return the current background color of the title bar.

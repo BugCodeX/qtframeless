@@ -8,7 +8,14 @@ from unittest.mock import MagicMock
 
 from qtpy.QtCore import QEvent, QPointF, Qt, Signal
 from qtpy.QtGui import QColor, QFont, QMouseEvent, QPalette
-from qtpy.QtWidgets import QLabel, QLineEdit, QMenuBar, QSizePolicy, QWidget
+from qtpy.QtWidgets import (
+    QLabel,
+    QLineEdit,
+    QMenuBar,
+    QSizePolicy,
+    QToolButton,
+    QWidget,
+)
 
 from qtframeless.windows.title_bar import TitleBar, VectorButton
 from qtframeless.windows.window import FramelessMainWindow
@@ -724,7 +731,9 @@ def test_titlebar_menubar_autostyle_theme_switching(qtbot):
     titleBar.setDarkTheme(False)
     assert "#000000" in menuBar.styleSheet()
     assert "#f9f9f9" in menuBar.styleSheet()
-    assert "margin-left: 8px;" in menuBar.styleSheet()
+    assert "padding: 0px 0px 0px 8px;" in menuBar.styleSheet()
+    assert "margin: 0px;" in menuBar.styleSheet()
+    assert "max-height" not in menuBar.styleSheet()
     assert "font-size: 13px;" in menuBar.styleSheet()
     assert "padding: 5px 10px;" in menuBar.styleSheet()
     assert "border-radius: 8px;" in menuBar.styleSheet()
@@ -735,7 +744,9 @@ def test_titlebar_menubar_autostyle_theme_switching(qtbot):
     titleBar.setDarkTheme(True)
     assert "#ffffff" in menuBar.styleSheet()
     assert "#2c2c2c" in menuBar.styleSheet()
-    assert "margin-left: 8px;" in menuBar.styleSheet()
+    assert "padding: 0px 0px 0px 8px;" in menuBar.styleSheet()
+    assert "margin: 0px;" in menuBar.styleSheet()
+    assert "max-height" not in menuBar.styleSheet()
     assert "font-size: 13px;" in menuBar.styleSheet()
     assert "padding: 5px 10px;" in menuBar.styleSheet()
     assert "border-radius: 8px;" in menuBar.styleSheet()
@@ -771,6 +782,104 @@ def test_titlebar_menubar_autostyle_disabled(qtbot):
     titleBar.setAutoStyleMenuBar(True)
     assert titleBar.isAutoStyleMenuBar() is True
     assert "#2c2c2c" in menuBar.styleSheet()
+
+
+def test_titlebar_menubar_translucent_attributes(qtbot):
+    """Verify setMenuBar configures WA_TranslucentBackground and disables autoFillBackground.
+
+    Parameters
+    ----------
+    qtbot : pytestqt.qtbot.QtBot
+        Pytest-qt fixture for widget lifecycle management.
+    """
+    window = QWidget()
+    qtbot.addWidget(window)
+    titleBar = TitleBar(window)
+
+    menuBar = QMenuBar(titleBar)
+    titleBar.setMenuBar(menuBar)
+
+    assert menuBar.testAttribute(Qt.WidgetAttribute.WA_TranslucentBackground) is True
+    assert menuBar.autoFillBackground() is False
+
+
+def test_titlebar_menubar_pre_styled_preservation(qtbot):
+    """Verify pre-styled menu bar is preserved on setMenuBar and across theme changes.
+
+    Parameters
+    ----------
+    qtbot : pytestqt.qtbot.QtBot
+        Pytest-qt fixture for widget lifecycle management.
+    """
+    window = QWidget()
+    qtbot.addWidget(window)
+    titleBar = TitleBar(window)
+
+    menuBar = QMenuBar(titleBar)
+    customStyleSheet = "QMenuBar { background-color: purple; color: white; }"
+    menuBar.setStyleSheet(customStyleSheet)
+
+    titleBar.setMenuBar(menuBar)
+
+    assert titleBar.isAutoStyleMenuBar() is False
+    assert menuBar.styleSheet() == customStyleSheet
+    assert menuBar.testAttribute(Qt.WidgetAttribute.WA_TranslucentBackground) is True
+    assert menuBar.autoFillBackground() is False
+
+    titleBar.setDarkTheme(True)
+    assert menuBar.styleSheet() == customStyleSheet
+
+    titleBar.setDarkTheme(False)
+    assert menuBar.styleSheet() == customStyleSheet
+
+    # Whitespace-only stylesheet is treated as un-styled and permits auto-styling
+    unStyledMenuBar = QMenuBar(titleBar)
+    unStyledMenuBar.setStyleSheet("   \n\t  ")
+    unStyledTitleBar = TitleBar(window)
+    unStyledTitleBar.setMenuBar(unStyledMenuBar)
+    assert unStyledTitleBar.isAutoStyleMenuBar() is True
+    assert "#000000" in unStyledMenuBar.styleSheet()
+
+
+def test_titlebar_apply_fluent_menu_style_standalone(qtbot):
+    """Verify TitleBar.applyFluentMenuStyle applies styles with DPI scaling independently.
+
+    Parameters
+    ----------
+    qtbot : pytestqt.qtbot.QtBot
+        Pytest-qt fixture for widget lifecycle management.
+    """
+    window = QWidget()
+    qtbot.addWidget(window)
+    menuBar = QMenuBar(window)
+
+    # Light theme at 96 DPI
+    TitleBar.applyFluentMenuStyle(menuBar, isDark=False, dpi=96)
+    assert "#000000" in menuBar.styleSheet()
+    assert "#f9f9f9" in menuBar.styleSheet()
+    assert "padding: 0px 0px 0px 8px;" in menuBar.styleSheet()
+    assert "margin: 0px;" in menuBar.styleSheet()
+    assert "max-height" not in menuBar.styleSheet()
+
+    # Dark theme at 144 DPI (1.5x scale -> 8 * 1.5 = 12px padding)
+    TitleBar.applyFluentMenuStyle(menuBar, isDark=True, dpi=144)
+    assert "#ffffff" in menuBar.styleSheet()
+    assert "#2c2c2c" in menuBar.styleSheet()
+    assert "padding: 0px 0px 0px 12px;" in menuBar.styleSheet()
+    assert "margin: 0px;" in menuBar.styleSheet()
+    assert "max-height" not in menuBar.styleSheet()
+
+    # 192 DPI (2.0x scale -> 8 * 2.0 = 16px padding)
+    TitleBar.applyFluentMenuStyle(menuBar, isDark=True, dpi=192)
+    assert "padding: 0px 0px 0px 16px;" in menuBar.styleSheet()
+    assert "margin: 0px;" in menuBar.styleSheet()
+    assert "max-height" not in menuBar.styleSheet()
+
+    # Fallback when DPI is non-positive defaults to 96 DPI
+    TitleBar.applyFluentMenuStyle(menuBar, isDark=False, dpi=0)
+    assert "padding: 0px 0px 0px 8px;" in menuBar.styleSheet()
+    assert "margin: 0px;" in menuBar.styleSheet()
+    assert "max-height" not in menuBar.styleSheet()
 
 
 def test_mouse_press_on_menubar_bypasses_system_move(qtbot, monkeypatch):
@@ -895,6 +1004,67 @@ def test_frameless_mainwindow_menubar_integration(qtbot):
     mainWindow.setMenuBar(customMenuBar)
     assert titleBar.getMenuBar() is customMenuBar
     assert mainWindow.menuBar() is customMenuBar
+
+
+def test_corner_buttons_align_to_top_edge(qtbot):
+    """Verify that title bar corner buttons align flush to the window top edge without gap.
+
+    Parameters
+    ----------
+    qtbot : pytestqt.qtbot.QtBot
+        Pytest-qt fixture for widget lifecycle management.
+    """
+    mainWindow = FramelessMainWindow()
+    qtbot.addWidget(mainWindow)
+    menuBar = mainWindow.menuBar()
+    menuBar.addMenu("File")
+    menuBar.addMenu("Edit")
+    mainWindow.resize(800, 600)
+    mainWindow.show()
+    qtbot.waitExposed(mainWindow)
+
+    titleBar = mainWindow.getTitleBar()
+    assert titleBar is not None
+    closeButton = titleBar.getButtons()["close"]
+    assert closeButton.mapTo(mainWindow, closeButton.rect().topLeft()).y() == 0
+
+
+def test_menubar_actions_visible_without_overflow_button(qtbot):
+    """Verify menu bar actions remain visible without triggering the overflow extension button.
+
+    Parameters
+    ----------
+    qtbot : pytestqt.qtbot.QtBot
+        Pytest-qt fixture for widget lifecycle management.
+    """
+    mainWindow = FramelessMainWindow()
+    qtbot.addWidget(mainWindow)
+
+    menuBar = mainWindow.menuBar()
+    fileMenu = menuBar.addMenu("File")
+    fileMenu.addAction("New")
+    editMenu = menuBar.addMenu("Edit")
+    editMenu.addAction("Undo")
+    settingsMenu = menuBar.addMenu("Settings")
+    settingsMenu.addAction("Preferences")
+
+    mainWindow.resize(850, 520)
+    mainWindow.show()
+    qtbot.waitExposed(mainWindow)
+
+    overflowButton = menuBar.findChild(QToolButton, "qt_menubar_ext_button")
+    if overflowButton is not None:
+        assert overflowButton.isVisible() is False
+
+    menuActions = menuBar.actions()
+    assert len(menuActions) == 3
+    for action in menuActions:
+        assert action.isVisible() is True
+        actionGeometry = menuBar.actionGeometry(action)
+        assert actionGeometry.width() > 0
+        assert actionGeometry.height() > 0
+
+
 
 
 
