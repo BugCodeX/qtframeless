@@ -47,4 +47,4 @@ def test_version():
     """Verify that qtframelesskit defines the expected package version."""
     import qtframelesskit
 
-    assert qtframelesskit.__version__ == "0.1.0"
+    assert qtframelesskit.__version__ == "0.2.0"

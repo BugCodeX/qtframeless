@@ -5,7 +5,7 @@ import sys
 
 from qtframelesskit.exceptions import PlatformNotSupportedError
 
-__version__ = "0.1.0"
+__version__ = "0.2.0"
 
 if sys.platform != "win32":
     raise PlatformNotSupportedError("qtframelesskit only supports Windows platforms.")

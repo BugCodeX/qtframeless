@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="docs/images/logo.png" alt="qtframelesskit logo" width="320" />
+  <img src="https://raw.githubusercontent.com/BugCodeX/qtframelesskit/main/docs/images/logo.png" alt="qtframelesskit logo" width="320" />
 
   # qtframelesskit
 
@@ -30,13 +30,13 @@ Standard Qt frameless windows (`Qt.WindowType.FramelessWindowHint`) strip away c
 ### Windows 11
 
 <div align="center">
-  <img src="docs/images/windows11_showcase.gif" alt="qtframelesskit Windows 11 Showcase" width="800" />
+  <img src="https://raw.githubusercontent.com/BugCodeX/qtframelesskit/main/docs/images/windows11_showcase.gif" alt="qtframelesskit Windows 11 Showcase" width="800" />
 </div>
 
 ### Windows 10
 
 <div align="center">
-  <img src="docs/images/windows10_showcase.gif" alt="qtframelesskit Windows 10 Showcase" width="800" />
+  <img src="https://raw.githubusercontent.com/BugCodeX/qtframelesskit/main/docs/images/windows10_showcase.gif" alt="qtframelesskit Windows 10 Showcase" width="800" />
 </div>
 
 ---

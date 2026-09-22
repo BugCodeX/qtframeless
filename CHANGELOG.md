@@ -5,6 +5,27 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.0] - 2026-09-22
+
+### What's New
+
+- **Modular TitleBar Subpackage**: Refactored `TitleBar` into a dedicated package `qtframelesskit.windows.title_bar` with separated concerns.
+- **Fluent MenuStyler**: Extracted `MenuStyler` providing isolated Fluent UI QSS styling for `QMenuBar` and `QMenu` popups with DPI-aware padding.
+- **TitleBarDragHandler**: Extracted `TitleBarDragHandler` encapsulating intelligent hit-testing, mouse press system move initiation (`startSystemMove()`), and double-click maximize/restore toggle.
+
+### Changes
+
+- **Relocated Vector Buttons**: Moved vector control buttons (`VectorButton`, `MinimizeButton`, `MaximizeButton`, `CloseButton`, `FullScreenButton`) into `title_bar/buttons.py` with backward-compatible alias in `windows/buttons.py`.
+- **PyPI Showcase & Logo Rendering**: Updated `README.md` image and showcase GIF links to absolute raw GitHub URLs so logos and GIFs render natively on PyPI package overview pages.
+
+### Verification
+
+```bash
+# Install with preferred binding
+pip install qtframelesskit[pyside6]==0.2.0  # or qtframelesskit[pyqt6]==0.2.0
+python -c "import qtframelesskit; print(qtframelesskit.__version__)"
+```
+
 ## [0.1.0] - 2026-09-21
 
 ### What's New
